@@ -8,6 +8,6 @@ Current leave management systems are outdated and there are a few problems that 
 ## Solution
 ClearLEth is a decentralized application available for anyone on the web to use, providing core features to aid leave management in a workplace.
 
-By interacting with our smart contracts, employees can submit their leave applications easily, while employers can then approve of these applications without the information going through 3rd party services. Key information being written on the blockchain will allow for transparent tracking for both employees, employers and the public.
+By interacting with our smart contracts, employees can submit their leave applications easily, while employers can then approve of these applications without the information going through 3rd party services. Key information being written on the blockchain will allow for transparent tracking for both employees, employers and the public. test
 
 
