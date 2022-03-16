@@ -10,4 +10,18 @@ ClearLEth is a decentralized application available for anyone on the web to use,
 
 By interacting with our smart contracts, employees can submit their leave applications easily, while employers can then approve of these applications without the information going through 3rd party services. Key information being written on the blockchain will allow for transparent tracking for both employees, employers and the public. 
 
+<<<<<<< HEAD
 
+=======
+## How to run application
+
+Open Ganache
+
+In root:
+npm install
+truffle compile
+truffle migrate
+
+In client:
+npm start
+>>>>>>> 3eda7ec (Init repo)
