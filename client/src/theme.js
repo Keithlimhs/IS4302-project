@@ -6,6 +6,7 @@ const theme = extendTheme({
       900: "#1a365d",
       800: "#153e75",
       700: "#2a69ac",
+      cadetBlue: "#5F9EA0",
     },
   },
   fonts: {

@@ -1,12 +1,11 @@
-import { Heading, Box } from "@chakra-ui/react";
+import { Heading, Box, Text } from "@chakra-ui/react";
 import React from "react";
 
 export default function Footer() {
   return (
-    <Box bg="black" color="white">
-      <main style={{ padding: "1rem 0"}}>
+    <Box bg="brand.700" color="white" p="2" textAlign="center">
         <Heading>Footer</Heading>
-      </main>
+        <Text>IS4302 GROUP X</Text>
     </Box>
   );
 }

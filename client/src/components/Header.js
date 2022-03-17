@@ -5,6 +5,7 @@ import {
   Avatar,
   HStack,
   IconButton,
+  Text,
   Button,
   Menu,
   MenuButton,
@@ -19,43 +20,33 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
+import ConnectWallet from "./ConnectWallet";
+import { RiWallet3Line } from "react-icons/ri";
 
-const Links = ["Dashboard", "Projects", "Team"];
 
-export default function Header() {
+export default function Header({setUserAddress, setWeb3}) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <>
-      <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
-        <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
+      <Box bg={"brand.cadetBlue"} px={4}>
+        <Flex h={20} alignItems={"center"} justifyContent={"space-between"}>
           <HStack spacing={8} alignItems={"center"}>
-            <Box>ClearLeth</Box>
+            <Heading>ClearLeth</Heading>
             <HStack
               as={"nav"}
               spacing={4}
               display={{ base: "none", md: "flex" }}
-            >
-
-            </HStack>
+            ></HStack>
 
             <nav>
-          Links:
-              <Link to="/">Home</Link> {" "}
-              <Link to="/employee">employee</Link>{" "}
-              <Link to="/employer">employer</Link>{" "}
-        </nav>
+              <Link to="/"><Text px={2}>Home</Text></Link>
+              <Link to="/employee">employee</Link>{"   "}
+              <Link to="/employer">employer</Link>{"   "}
+            </nav>
           </HStack>
           <Flex alignItems={"center"}>
-            <Button
-              variant={"solid"}
-              colorScheme={"teal"}
-              size={"sm"}
-              mr={4}
-              leftIcon={<AddIcon />}
-            >
-              Wallet
-            </Button>
+            <ConnectWallet setUserAddress={setUserAddress} setWeb3={setWeb3}/>
           </Flex>
         </Flex>
       </Box>
