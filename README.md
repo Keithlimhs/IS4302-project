@@ -12,8 +12,6 @@ By interacting with our smart contracts, employees can submit their leave applic
 
 ## How to run application
 
-Open Ganache
-
 In root:
 npm install
 truffle compile
@@ -21,3 +19,9 @@ truffle migrate
 
 In client:
 npm start
+
+Open Ganache
+
+IMPORTANT!!
+* Check if Metamask on browser is on the correct Network (Add network if you haven't)
+* Import account from Ganache
