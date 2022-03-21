@@ -2,22 +2,22 @@ import ClearLethContract from "./contracts/ClearLeth.json";
 import getWeb3 from "./getWeb3";
 import { ethers } from "ethers";
 
-export const loadWeb3 = async ({ setWeb3, setUserAddress }) => {
+export const loadWeb3 = async ({ setUserAddress }) => {
   try {
     // Get network provider and web3 instance.
-    const web3 = await getWeb3();
+    // const web3 = await getWeb3();
 
     // Use web3 to get the user's accounts.
-    const accounts = await web3.eth.getAccounts();
+    // const accounts = await web3.eth.getAccounts();
 
-/*     const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
-    const walletAddress = await signer.getAddress(); */
+    const walletAddress = await signer.getAddress();
     
 
-    setWeb3(web3);
-    setUserAddress(accounts);
+    //setWeb3(web3);
+    setUserAddress(walletAddress);
   } catch (error) {
     // Catch any errors for any of the above operations.
     alert(
@@ -27,15 +27,15 @@ export const loadWeb3 = async ({ setWeb3, setUserAddress }) => {
   }
 };
 
-export const getContract = async ({ web3 }) => {
+export const getContract = async () => {
   // Get the contract instance.
-  const networkId = await web3.eth.net.getId();
+/*   const networkId = await web3.eth.net.getId();
   const deployedNetwork = ClearLethContract.networks[networkId];
   const instance = new web3.eth.Contract(
     ClearLethContract.abi,
     deployedNetwork && deployedNetwork.address
   );
-  return instance;
+  return instance; */
 };
 
 export const callContractExample = async () => {

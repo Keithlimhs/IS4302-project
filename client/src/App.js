@@ -14,12 +14,12 @@ import Footer from "./components/Footer";
 import { loadWeb3 } from "./services.js";
 
 export default function App() {
-  const [web3, setWeb3] = useState(null);
+  //const [web3, setWeb3] = useState(null);
   const [userAddress, setUserAddress] = useState(null);
 
   useEffect(() => {
-    if (web3 == null) {
-      loadWeb3({setWeb3, setUserAddress});
+    if (userAddress == null) {
+      loadWeb3({setUserAddress});
     }
   }, []);
 
@@ -28,12 +28,7 @@ export default function App() {
       <MetaContext.Provider value={{ userAddress }}>
         <Box>
           <BrowserRouter>
-            <Header userAddress={userAddress} setUserAddress={setUserAddress} setWeb3={setWeb3} />
-            <Center bg="brand.700">
-              <Heading color="white" m={10}>
-                ClearLeth
-              </Heading>
-            </Center>
+            <Header userAddress={userAddress} setUserAddress={setUserAddress} />
             <Routes>
               <Route path="/" element={<HomePage />}></Route>
               <Route path="/employee" element={<EmployeeView />}></Route>

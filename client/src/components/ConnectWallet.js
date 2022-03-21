@@ -5,9 +5,9 @@ import { loadWeb3 } from "../services.js";
 import { MetaContext } from "../contexts/MetaContext";
 
 // this method buggy
-async function connect(setUserAddress, setWeb3) {
-  await loadWeb3({ setUserAddress, setWeb3 });
-  console.log("connecting");
+async function connect(setUserAddress) {
+  await loadWeb3({ setUserAddress });
+  console.log("connecting...");
   return;
 }
 
@@ -25,7 +25,7 @@ async function checkIfWalletIsConnected(setUserAddress) {
   }
 }
 
-export default function ConnectWallet({ setUserAddress, setWeb3 }) {
+export default function ConnectWallet({ setUserAddress }) {
   const { userAddress } = React.useContext(MetaContext);
 
   useEffect(() => {
@@ -39,13 +39,13 @@ export default function ConnectWallet({ setUserAddress, setWeb3 }) {
           <Address userAddress={userAddress} />
         </Box>
       ) : (
-        <Connect setUserAddress={setUserAddress} setWeb3={setWeb3} />
+        <Connect setUserAddress={setUserAddress} />
       )}
     </Box>
   );
 }
 
-function Connect({ setUserAddress, setWeb3 }) {
+function Connect({ setUserAddress }) {
   return (
     <Button
       leftIcon={<RiWallet3Line />}
@@ -54,10 +54,10 @@ function Connect({ setUserAddress, setWeb3 }) {
       _hover={{ bgGradient: "linear(to-l, brand.700, brand.900)" }}
       boxShadow="lg"
       size="lg"
-      onClick={() => window.location.reload()/*connect(setUserAddress, setWeb3)*/}
+      onClick={() => connect(setUserAddress)}
       _focus={false}
     >
-      Refresh
+      Connect Wallet
     </Button>
   );
 }
@@ -66,7 +66,7 @@ function Address({ userAddress }) {
   return (
     <Button
       color="white"
-      bgGradient="linear(to-l, brand.700, brand.900)"
+      bgGradient="linear(to-l, brand.yellow, brand.gold)"
       boxShadow="lg"
       _hover={false}
       _focus={false}
