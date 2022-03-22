@@ -15,6 +15,7 @@ contract ClearLeth {
     string date; //can look into using timestamp
     string reason;
     leaveStatus status;
+    address employee;
   }
 
   leave[] allLeaves;
@@ -29,6 +30,22 @@ contract ClearLeth {
   event LeaveRejected(address employee, address employer, uint leaveId);
   event LeaveLimitSet(address employer, uint limit);
 
+
+  modifier validLeaveId(uint leaveId) {
+    require(leaveId < numLeaves);
+    _;
+  }
+
+  modifier employerOnly(address employeeAddress) {
+    require(employeeToEmployer[employeeAddress] == msg.sender);
+    _;
+  }
+
+  modifier validLeaveStatus(leave memory leaveApplication) {
+    require(leaveApplication.status == leaveStatus.pending);
+    _;
+  }
+
   function addEmployee(address employeeAddress) public {
     employeeAddresses.push(employeeAddress);
     employerToEmployee[msg.sender].push(employeeAddress);
@@ -36,7 +53,7 @@ contract ClearLeth {
     employeeLeaveBalance[employeeAddress] = leaveAmount;
   }
 
-  function removeEmployee(address employeeAddress) public {
+  function removeEmployee(address employeeAddress) public employerOnly(employeeAddress) {
     for (uint i = 0; i < employeeAddresses.length; i++) {
       if (employeeAddresses[i] == employeeAddress) {
         employeeAddresses[i] = employeeAddresses[employeeAddresses.length-1];
@@ -56,8 +73,12 @@ contract ClearLeth {
     delete employeeLeaveBalance[employeeAddress];
   }
 
-  function getAllEmployees(address employerAddress) public view returns (address[] memory) {
+  function getEmployeesByEmployer(address employerAddress) public view returns (address[] memory) {
     return employerToEmployee[employerAddress];
+  }
+
+  function getAllEmployees() public view returns (address[] memory) {
+    return employeeAddresses;
   }
 
   function getAllEmployers() public view returns (address[] memory) {
@@ -69,7 +90,8 @@ contract ClearLeth {
       numLeaves,
       date,
       reason,
-      leaveStatus.pending
+      leaveStatus.pending,
+      msg.sender
     );
 
     numLeaves += 1;
@@ -79,7 +101,7 @@ contract ClearLeth {
 
   }
 
-  function cancelLeave(leave memory leaveToCancel) public {
+  function cancelLeave(leave memory leaveToCancel) public validLeaveStatus(leaveToCancel) {
     for (uint i = 0; i < employeeToLeaves[msg.sender].length; i++) {
       if (employeeToLeaves[msg.sender][i].id == leaveToCancel.id) {
         employeeToLeaves[msg.sender][i].status = leaveStatus.cancelled;
@@ -88,6 +110,42 @@ contract ClearLeth {
     emit LeaveCancelled(msg.sender, leaveToCancel.id);
   }
 
+  function approveLeave(leave memory leaveToApprove) public validLeaveId(leaveToApprove.id) validLeaveStatus(leaveToApprove) employerOnly(leaveToApprove.employee) {
+    address employeeAddress = leaveToApprove.employee;
+    for (uint i = 0; i < employeeToLeaves[employeeAddress].length; i++) {
+      if (employeeToLeaves[employeeAddress][i].id == leaveToApprove.id) {
+        employeeToLeaves[employeeAddress][i].status = leaveStatus.approved;
+
+      }
+    }
+
+    for (uint j = 0; j < allLeaves.length; j++) {
+      if (allLeaves[j].id == leaveToApprove.id) {
+        allLeaves[j].status = leaveStatus.approved;
+      }
+    }
+
+    datesToEmployeesApplied[leaveToApprove.date]++;
+    employeeLeaveBalance[employeeAddress]--;
+    emit LeaveApproved(employeeAddress, msg.sender, leaveToApprove.id);
+  }
+
+  function rejectLeave(leave memory leaveToReject) public validLeaveId(leaveToReject.id) validLeaveStatus(leaveToReject) employerOnly(leaveToReject.employee) {
+    address employeeAddress = leaveToReject.employee;
+    for (uint i = 0; i < employeeToLeaves[employeeAddress].length; i++) {
+      if (employeeToLeaves[employeeAddress][i].id == leaveToReject.id) {
+        employeeToLeaves[employeeAddress][i].status = leaveStatus.rejected;
+
+      }
+    }
+
+    for (uint j = 0; j < allLeaves.length; j++) {
+      if (allLeaves[j].id == leaveToReject.id) {
+        allLeaves[j].status = leaveStatus.rejected;
+      }
+    }
+    emit LeaveRejected(employeeAddress, msg.sender, leaveToReject.id);
+  }
 
 
   function getLeaveBalance() public view returns (uint) {
