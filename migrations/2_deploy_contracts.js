@@ -1,5 +1,6 @@
 var ClearLeth = artifacts.require("./ClearLeth.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(ClearLeth);
+  let initialLeaveAmount = 12
+  deployer.deploy(ClearLeth, initialLeaveAmount);
 };
