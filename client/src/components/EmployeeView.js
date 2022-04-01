@@ -17,8 +17,8 @@ import {
   FormErrorMessage,
   FormHelperText,
 } from "@chakra-ui/react";
-import employeeDetails from "./EmployeeDetails";
 import EmployeeDetails from "./EmployeeDetails";
+
 import { getContract } from "../services";
 
 
@@ -30,7 +30,6 @@ export default function EmployeeView() {
 
 
   useEffect(() => {
-    console.log(userAddress);
 
   }, []);
 

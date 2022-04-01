@@ -18,32 +18,14 @@ import {
 import { ethers } from "ethers";
 import { addEmployee } from "../services";
 
-export default function EmployeeDetails({ item }) {
+export default function EmployeeDetails() {
   const { userAddress } = React.useContext(MetaContext);
-  let { id } = item;
-
-  useEffect(() => {      console.log(userAddress);
-}, []);
-
-  const handleAddEmployee = async () => {
-      console.log(userAddress);
-    addEmployee(userAddress);
-  }
 
   return (
     <Box p="2">
       <Heading as="h1" size="l">
-        <u>
-          hello
-          {item}
-        </u>
+        <u>hello</u>
       </Heading>
-      <Button
-        size="md"
-        onClick={() => handleAddEmployee()}
-      >
-        Register
-      </Button>
     </Box>
   );
 }

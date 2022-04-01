@@ -2,13 +2,26 @@
 pragma solidity >=0.4.22 <0.9.0;
 
 contract ClearLeth {
-    address[] public registeredAddresses;
-    mapping(address => bool) employers;
-    mapping(address => bool) employees;
+    address public contractOwner;
+
+    address[] employers;
+    address[] employees;
+    address[] authorities;
+
+    mapping(address => role) addressToRole;
+
     mapping(address => address) employeeToEmployer;
     mapping(address => address[]) employerToEmployee;
+
     uint256 public numOfEmployees = 0;
     uint256 public numOfEmployers = 0;
+    uint256 public numOfAuthorities = 0;
+
+    enum role {
+        employee,
+        employer,
+        authority
+    }
 
     enum leaveStatus {
         pending,
@@ -16,9 +29,10 @@ contract ClearLeth {
         approved,
         rejected
     }
+
     struct leave {
         uint256 id;
-        string date; //can look into using timestamp
+        uint256 date; // UNIX
         bytes32 reason;
         leaveStatus status;
         address employee;
@@ -27,12 +41,13 @@ contract ClearLeth {
     uint256 public leaveAmount;
     uint256 public numLeaves = 0;
     leave[] allLeaves;
+
     mapping(address => leave[]) employeeToLeaves;
     mapping(address => uint256) employeeLeaveBalance;
-    mapping(string => uint256) datesToEmployeesApplied;
+    mapping(uint256 => uint256) datesToEmployeesApplied;
     mapping(address => uint256) employersToLeaveLimit;
 
-    event LeaveApplied(address employee, string date);
+    event LeaveApplied(address employee, uint256 date);
     event LeaveApproved(address employee, address employer, uint256 leaveId);
     event LeaveCancelled(address employee, uint256 leaveId);
     event LeaveRejected(address employee, address employer, uint256 leaveId);
@@ -41,9 +56,10 @@ contract ClearLeth {
     // @dev Owner of contract will be able to add employers and is an employer
     // @dev leaveAmount is also set when deployed
     constructor(uint256 _leaveAmount) {
-        registeredAddresses.push(msg.sender);
+        contractOwner = msg.sender;
+        employers.push(msg.sender);
         numOfEmployers++;
-        employers[msg.sender] = true;
+        addressToRole[msg.sender] = role.employer;
         leaveAmount = _leaveAmount;
     }
 
@@ -55,10 +71,42 @@ contract ClearLeth {
         _;
     }
 
+    modifier notSelf(address toAdd) {
+        require(
+            toAdd != msg.sender,
+            "You cannot add yourself!"
+        );
+        _;
+    }
+
+    modifier isOwner() {
+        require(
+            contractOwner == msg.sender,
+            "Only the contract owner can call this function"
+        );
+        _;
+    }
+
     modifier isEmployer() {
         require(
-            employers[msg.sender] == true,
+            addressToRole[msg.sender] == role.employer,
             "Only an employer can call this function"
+        );
+        _;
+    }
+
+    modifier isEmployee() {
+        require(
+            addressToRole[msg.sender] == role.employee,
+            "Only employees can call this function"
+        );
+        _;
+    }
+
+    modifier isAuthority() {
+        require(
+            addressToRole[msg.sender] == role.authority,
+            "Only authorities can call this function"
         );
         _;
     }
@@ -84,27 +132,25 @@ contract ClearLeth {
         _;
     }
 
-    modifier isEmployee() {
-        require(
-            employees[msg.sender] == true,
-            "Only employees can call this function"
-        );
-        _;
-    }
-
     function addEmployer(address _employerAddress) public isEmployer {
-        registeredAddresses.push(_employerAddress);
-        employers[_employerAddress] = true;
+        employers.push(_employerAddress);
+        addressToRole[_employerAddress] = role.employer;
         numOfEmployers++;
     }
 
-    function addEmployee(address _employeeAddress) public isEmployer {
-        registeredAddresses.push(_employeeAddress);
-        employees[_employeeAddress] = true;
+    function addEmployee(address _employeeAddress) public isEmployer notSelf(_employeeAddress) {
+        employees.push(_employeeAddress);
+        addressToRole[_employeeAddress] = role.employee;
         employerToEmployee[msg.sender].push(_employeeAddress);
         employeeToEmployer[_employeeAddress] = msg.sender;
         employeeLeaveBalance[_employeeAddress] = leaveAmount;
         numOfEmployees++;
+    }
+
+    function addAuthority(address _authorityAddress) public isOwner {
+        authorities.push(_authorityAddress);
+        addressToRole[_authorityAddress] = role.authority;
+        numOfAuthorities++;
     }
 
     // @dev would be better if we just update mapping employees to false
@@ -113,12 +159,10 @@ contract ClearLeth {
         public
         employerOnly(_employeeAddress)
     {
-        for (uint256 i = 0; i < registeredAddresses.length; i++) {
-            if (registeredAddresses[i] == _employeeAddress) {
-                registeredAddresses[i] = registeredAddresses[
-                    registeredAddresses.length - 1
-                ];
-                registeredAddresses.pop();
+        for (uint256 i = 0; i < employees.length; i++) {
+            if (employees[i] == _employeeAddress) {
+                employees[i] = employees[employees.length - 1];
+                employees.pop();
             }
         }
 
@@ -131,6 +175,7 @@ contract ClearLeth {
             }
         }
 
+        delete addressToRole[_employeeAddress];
         delete employeeToEmployer[_employeeAddress];
         delete employeeToLeaves[_employeeAddress];
         delete employeeLeaveBalance[_employeeAddress];
@@ -148,30 +193,33 @@ contract ClearLeth {
     // @dev transfer complexity to view function no gas
     function getAllEmployees() public view returns (address[] memory) {
         address[] memory employeeArray = new address[](numOfEmployees);
-        uint256 counter = 0;
-        for (uint256 i = 0; i < registeredAddresses.length; i++) {
-            if (employees[registeredAddresses[i]] == true) {
-                employeeArray[counter] = registeredAddresses[i];
-                counter++;
-            }
+        for (uint256 i = 0; i < numOfEmployees; i++) {
+            employeeArray[i] = employees[i];
         }
+
         return employeeArray;
     }
 
     // @dev transfer complexity to view function no gas
     function getAllEmployers() public view returns (address[] memory) {
         address[] memory employerArray = new address[](numOfEmployers);
-        uint256 counter = 0;
-        for (uint256 i = 0; i < registeredAddresses.length; i++) {
-            if (employers[registeredAddresses[i]] == true) {
-                employerArray[counter] = registeredAddresses[i];
-                counter++;
-            }
+        for (uint256 i = 0; i < numOfEmployers; i++) {
+            employerArray[i] = employers[i];
         }
+
         return employerArray;
     }
 
-    function applyLeave(string memory date, bytes32 reason) public isEmployee {
+    // @dev transfer complexity to view function no gas
+    function getAllAuthorities() public view returns (address[] memory) {
+        address[] memory authoritiesArray = new address[](numOfAuthorities);
+        for (uint256 i = 0; i < numOfAuthorities; i++) {
+            authoritiesArray[i] = authorities[i];
+        }
+        return authoritiesArray;
+    }
+
+    function applyLeave(uint256 date, bytes32 reason) public isEmployee {
         leave memory newLeave = leave(
             numLeaves,
             date,

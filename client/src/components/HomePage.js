@@ -35,7 +35,7 @@ export default function HomePage() {
         <LinkBox
           as="article"
           w={"100%"}
-          p="5"
+          p="35"
           boxShadow="md"
           borderWidth="1px"
           rounded="md"
@@ -55,7 +55,7 @@ export default function HomePage() {
         <LinkBox
           as="article"
           w={"100%"}
-          p="5"
+          p="35"
           boxShadow="md"
           borderWidth="1px"
           rounded="md"
@@ -73,7 +73,7 @@ export default function HomePage() {
         <LinkBox
           as="article"
           w={"100%"}
-          p="5"
+          p="35"
           boxShadow="md"
           borderWidth="1px"
           rounded="md"

@@ -1,3 +1,4 @@
+const moment = require('moment');
 const _deploy_contracts = require("../migrations/2_deploy_contracts");
 const truffleAssert = require("truffle-assertions");
 const assert = require("assert");
@@ -71,8 +72,13 @@ contract("ClearLeth", (accounts) => {
 
     // Test Case 3: Applying/cancelling leaves
     it("Test applying and cancelling of leaves", async () => {
+        let today = moment().unix();
+        // TO GET LOCAL DATE STRING
+        // let unixDate = new Date(today.unix() * 1000);
+        // console.log(unixDate.toLocaleString());
+
         let leaveApplication = await clearLethInstance.applyLeave(
-            "2022-03-05",
+            today,
             web3.utils.asciiToHex("test"),
             { from: employee }
         );
@@ -87,9 +93,10 @@ contract("ClearLeth", (accounts) => {
 
     // Test Case 3b: Testing reverts
     it("Ensure only employees can apply leave & cancel leaves", async () => {
+        let today = moment().unix();
         await truffleAssert.reverts(
             clearLethInstance.applyLeave(
-                "2022-03-05",
+                today,
                 web3.utils.asciiToHex("test"),
                 { from: employer }
             ),
@@ -97,7 +104,7 @@ contract("ClearLeth", (accounts) => {
         );
 
         let leaveApplication = await clearLethInstance.applyLeave(
-            "2022-03-05",
+            today,
             web3.utils.asciiToHex("test"),
             { from: employee }
         );
@@ -114,6 +121,7 @@ contract("ClearLeth", (accounts) => {
 
     // Test Case 4: Approving/rejecting leaves
     it("Test approving and rejecting of leaves", async () => {
+        let timestamp = moment("2022-04-05").unix();
         let leave = await clearLethInstance.getLeaveInformation(1);
         let leaveApproval = await clearLethInstance.approveLeave(leave, {
             from: employer,
@@ -121,7 +129,7 @@ contract("ClearLeth", (accounts) => {
         truffleAssert.eventEmitted(leaveApproval, "LeaveApproved");
 
         let leaveApplication2 = await clearLethInstance.applyLeave(
-            "2022-04-05",
+            timestamp,
             web3.utils.asciiToHex("test"),
             { from: employee }
         );
@@ -136,8 +144,9 @@ contract("ClearLeth", (accounts) => {
 
     // Test Case 4b: Testing modifiers
     it("Ensure only employers of employee can approve or reject leave", async () => {
+        let timestamp = moment("2022-05-05").unix();
         let leaveApplication2 = await clearLethInstance.applyLeave(
-            "2022-05-05",
+            timestamp,
             web3.utils.asciiToHex("test"),
             { from: employee }
         );

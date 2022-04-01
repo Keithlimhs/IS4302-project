@@ -2,7 +2,7 @@ import ClearLethContract from "./contracts/ClearLeth.json";
 import getWeb3 from "./getWeb3";
 import { ethers } from "ethers";
 
-export const loadWeb3 = async ({ setUserAddress }) => {
+export const loadWeb3 = async (setUserAddress) => {
   try {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
@@ -32,33 +32,60 @@ export const getContract = async () => {
   let contractInstance = new ethers.Contract(contractAddress, abi, signer);
   console.log(contractInstance);
   return contractInstance;
-  // setContractInstance(instance);
 };
 
-export const addEmployee = async ({ address, setLeaveLimit }) => {
-  let contractInstance = await getContract();
-  const options = {
-    from: address,
-  };
-  console.log(address);
-  const response = await contractInstance.addEmployee(address, options);
-  console.log(response);
-
-  setLeaveLimit(response);
+export const getAllEmployees = async () => {
+  try {
+    let contractInstance = await getContract();
+    const response = await contractInstance.getAllEmployees();
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-export const getEmployees = async () => {
-  let contractInstance = await getContract();
-  const response = await contractInstance.employees();
-  console.log(response);
-
-  return response;
+export const getAllEmployers = async () => {
+  try {
+    let contractInstance = await getContract();
+    const response = await contractInstance.getAllEmployers();
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-// export const getLeaveLimit = async ({setLeaveLimit, contractInstance}) => {
+export const getAllAuthorities = async () => {
+  try {
+    let contractInstance = await getContract();
+    const response = await contractInstance.getAllAuthorities();
+  } catch (error) {
+    console.error(error);
+  }
+};
 
-//     const response = await contractInstance.getLeaveLimit();
-//     console.log(response);
+export const getEmployeeLeaveBalance = async (address) => {
+  try {
+    let contractInstance = await getContract();
+    const response = await contractInstance.employeeLeaveBalance(address);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
-//     setLeaveLimit(response);
-// };
+export const addEmployee = async (address) => {
+  try {
+    let contractInstance = await getContract();
+    const response = await contractInstance.addEmployee(address);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const addEmployer = async (address) => {
+  try {
+    let contractInstance = await getContract();
+    const response = await contractInstance.addEmployer(address);
+  } catch (error) {
+    console.error(error);
+  }
+};

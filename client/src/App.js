@@ -20,7 +20,7 @@ export default function App() {
 
   useEffect(() => {
     if (userAddress == null) {
-      loadWeb3({setUserAddress});
+      loadWeb3(setUserAddress);
     }
   }, []);
 
