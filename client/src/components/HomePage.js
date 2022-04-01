@@ -15,7 +15,14 @@ export default function HomePage() {
   useEffect(() => {}, []);
 
   return (
-    <Box w="100%" my={100} p={4} color="black" alignItems={"center"} justifyContent={"space-between"}>
+    <Box
+      w="100%"
+      my={100}
+      p={4}
+      color="black"
+      alignItems={"center"}
+      justifyContent={"space-between"}
+    >
       <Heading fontSize="60px" my={8} textAlign="center">
         Welcome to ClearLeth! 💠
       </Heading>
@@ -25,20 +32,60 @@ export default function HomePage() {
       </Text>
 
       <HStack>
-        <LinkBox as="article" w={"50%"} p="5" borderWidth="1px" rounded="md" textAlign="center">
+        <LinkBox
+          as="article"
+          w={"100%"}
+          p="5"
+          boxShadow="md"
+          borderWidth="1px"
+          rounded="md"
+          textAlign="center"
+          _hover={{
+            background: "gray.50",
+          }}
+        >
           <Heading size="md" my="2">
             <LinkOverlay href="/employee">Employee 🙇‍♂️</LinkOverlay>
           </Heading>
           <Text>
-            Never have to worry about your leaves being "forgetten" anymore!
+            No more "forgetten" leaves!
           </Text>
         </LinkBox>
 
-        <LinkBox as="article" w={"50%"} p="5" borderWidth="1px" rounded="md" textAlign="center">
+        <LinkBox
+          as="article"
+          w={"100%"}
+          p="5"
+          boxShadow="md"
+          borderWidth="1px"
+          rounded="md"
+          textAlign="center"
+          _hover={{
+            background: "gray.50",
+          }}
+        >
           <Heading size="md" my="2">
             <LinkOverlay href="/employer">Employer 🕺</LinkOverlay>
           </Heading>
           <Text>Ditch those subscriptions! No more hassle!</Text>
+        </LinkBox>
+
+        <LinkBox
+          as="article"
+          w={"100%"}
+          p="5"
+          boxShadow="md"
+          borderWidth="1px"
+          rounded="md"
+          textAlign="center"
+          _hover={{
+            background: "gray.50",
+          }}
+        >
+          <Heading size="md" my="2">
+            <LinkOverlay href="/authorities">Authorities 🏛</LinkOverlay>
+          </Heading>
+          <Text>Manage workplace disputes!</Text>
         </LinkBox>
       </HStack>
 

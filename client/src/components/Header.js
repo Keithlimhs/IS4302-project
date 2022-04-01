@@ -40,6 +40,7 @@ export default function Header({setUserAddress}) {
             <Link to="/"><Heading size="md" color={"white"}>ClearLeth</Heading></Link>
               <Link to="/employee"><Text color={"white"}>Employee</Text></Link>{"   "}
               <Link to="/employer"><Text color={"white"}>Employer</Text></Link>{"   "}
+              <Link to="/authorities"><Text color={"white"}>Authorities</Text></Link>{"   "}
           </HStack>
           <Flex alignItems={"center"} justifyContent={"space-between"}>
             <ConnectWallet setUserAddress={setUserAddress} />

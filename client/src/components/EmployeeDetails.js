@@ -15,26 +15,35 @@ import {
   Flex,
   Heading,
 } from "@chakra-ui/react";
-import Link from "next/link";
 import { ethers } from "ethers";
-import { loadDonationsContract } from "../src/contracts";
+import { addEmployee } from "../services";
 
-export default function SingleListing({ item }) {
+export default function EmployeeDetails({ item }) {
   const { userAddress } = React.useContext(MetaContext);
   let { id } = item;
 
-  useEffect(() => {
+  useEffect(() => {      console.log(userAddress);
+}, []);
 
-  }, []);
-
+  const handleAddEmployee = async () => {
+      console.log(userAddress);
+    addEmployee(userAddress);
+  }
 
   return (
     <Box p="2">
       <Heading as="h1" size="l">
         <u>
-          {id.toString()}
+          hello
+          {item}
         </u>
       </Heading>
+      <Button
+        size="md"
+        onClick={() => handleAddEmployee()}
+      >
+        Register
+      </Button>
     </Box>
   );
 }

@@ -8,7 +8,7 @@ import theme from "./theme";
 
 ReactDOM.render(
   <ChakraProvider theme={theme}>
-    <App style={"background-color: red"}/>
+    <App/>
   </ChakraProvider>,
   document.getElementById("root")
 );

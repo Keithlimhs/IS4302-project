@@ -4,19 +4,11 @@ import { ethers } from "ethers";
 
 export const loadWeb3 = async ({ setUserAddress }) => {
   try {
-    // Get network provider and web3 instance.
-    // const web3 = await getWeb3();
-
-    // Use web3 to get the user's accounts.
-    // const accounts = await web3.eth.getAccounts();
-
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
     const walletAddress = await signer.getAddress();
-    
 
-    //setWeb3(web3);
     setUserAddress(walletAddress);
   } catch (error) {
     // Catch any errors for any of the above operations.
@@ -29,24 +21,44 @@ export const loadWeb3 = async ({ setUserAddress }) => {
 
 export const getContract = async () => {
   // Get the contract instance.
-/*   const networkId = await web3.eth.net.getId();
-  const deployedNetwork = ClearLethContract.networks[networkId];
-  const instance = new web3.eth.Contract(
-    ClearLethContract.abi,
-    deployedNetwork && deployedNetwork.address
-  );
-  return instance; */
+  let provider = new ethers.providers.Web3Provider(window.ethereum);
+
+  // GET CONTRACT ADDRESS
+  let deployedNetwork = ClearLethContract.networks[5777];
+  let contractAddress = deployedNetwork.address;
+
+  let abi = ClearLethContract.abi;
+  let signer = provider.getSigner();
+  let contractInstance = new ethers.Contract(contractAddress, abi, signer);
+  console.log(contractInstance);
+  return contractInstance;
+  // setContractInstance(instance);
 };
 
-export const callContractExample = async () => {
-  /*     const { accounts, contract } = this.state;
+export const addEmployee = async ({ address, setLeaveLimit }) => {
+  let contractInstance = await getContract();
+  const options = {
+    from: address,
+  };
+  console.log(address);
+  const response = await contractInstance.addEmployee(address, options);
+  console.log(response);
 
-    // Stores a given value, 5 by default.
-    await contract.methods.set(5).send({ from: accounts[0] });
-
-    // Get the value from the contract to prove it worked.
-    const response = await contract.methods.get().call();
-
-     Update state with the result.
-    this.setState({ storageValue: response }); */
+  setLeaveLimit(response);
 };
+
+export const getEmployees = async () => {
+  let contractInstance = await getContract();
+  const response = await contractInstance.employees();
+  console.log(response);
+
+  return response;
+};
+
+// export const getLeaveLimit = async ({setLeaveLimit, contractInstance}) => {
+
+//     const response = await contractInstance.getLeaveLimit();
+//     console.log(response);
+
+//     setLeaveLimit(response);
+// };

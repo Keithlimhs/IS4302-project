@@ -15,10 +15,10 @@ export default function Footer() {
         right: 0,
       }}
     >
-      <Text fontSize="20px">
+      <Text fontSize="16px">
         Superior Leave Management, All on the Blockchain.
       </Text>
-      <Text as="i">IS4302 GROUP X</Text>
+      <Text as="i" fontSize="16px">IS4302 GROUP 8</Text>
     </Box>
   );
 }

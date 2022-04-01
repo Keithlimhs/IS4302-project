@@ -17,12 +17,23 @@ import {
   FormErrorMessage,
   FormHelperText,
 } from "@chakra-ui/react";
+import employeeDetails from "./EmployeeDetails";
+import EmployeeDetails from "./EmployeeDetails";
+import { getContract } from "../services";
+
 
 export default function EmployeeView() {
   const { userAddress } = React.useContext(MetaContext);
   const [input, setInput] = useState('')
 
   const handleInputChange = (e) => setInput(e.target.value)
+
+
+  useEffect(() => {
+    console.log(userAddress);
+
+  }, []);
+
 
   const isError = input === ''
 
@@ -61,7 +72,7 @@ export default function EmployeeView() {
 
             <TabPanels>
               <TabPanel>
-                <p>one!</p>
+                <EmployeeDetails item={2}></EmployeeDetails>
               </TabPanel>
               <TabPanel>
                 <FormControl isInvalid={isError}>

@@ -9,6 +9,7 @@ import "./App.css";
 import { Container, Center, Heading, Box } from "@chakra-ui/react";
 import EmployeeView from "./components/EmployeeView";
 import EmployerView from "./components/EmployerView";
+import AuthoritiesView from "./components/AuthoritiesView";
 import HomePage from "./components/HomePage";
 import Footer from "./components/Footer";
 import { loadWeb3 } from "./services.js";
@@ -33,6 +34,7 @@ export default function App() {
               <Route path="/" element={<HomePage />}></Route>
               <Route path="/employee" element={<EmployeeView />}></Route>
               <Route path="/employer" element={<EmployerView />}></Route>
+              <Route path="/authorities" element={<AuthoritiesView />}></Route>
             </Routes>
             <Footer />
           </BrowserRouter>
