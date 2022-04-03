@@ -71,13 +71,13 @@ contract ClearLeth {
         _;
     }
 
-    modifier notSelf(address toAdd) {
-        require(
-            toAdd != msg.sender,
-            "You cannot add yourself!"
-        );
-        _;
-    }
+    // modifier notSelf(address toAdd) {
+    //     require(
+    //         toAdd != msg.sender,
+    //         "You cannot add yourself!"
+    //     );
+    //     _;
+    //}
 
     modifier isOwner() {
         require(
@@ -138,7 +138,7 @@ contract ClearLeth {
         numOfEmployers++;
     }
 
-    function addEmployee(address _employeeAddress) public isEmployer notSelf(_employeeAddress) {
+    function addEmployee(address _employeeAddress) public isEmployer {
         employees.push(_employeeAddress);
         addressToRole[_employeeAddress] = role.employee;
         employerToEmployee[msg.sender].push(_employeeAddress);
