@@ -30,6 +30,23 @@ contract ClearLeth {
         rejected
     }
 
+    struct employee {
+        string name;
+        address wallet;
+        uint256 employeeId;
+        uint256 companyId;
+        role role;
+
+    }
+
+    struct employer {
+        string name;
+        address wallet;
+        uint256 employerId;
+        uint256 companyId;
+        role role;
+    }
+
     struct leave {
         uint256 id;
         uint256 date; // UNIX
