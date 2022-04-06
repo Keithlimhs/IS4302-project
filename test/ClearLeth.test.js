@@ -1,11 +1,19 @@
-const moment = require('moment');
+const moment = require("moment");
 const _deploy_contracts = require("../migrations/2_deploy_contracts");
 const truffleAssert = require("truffle-assertions");
 const assert = require("assert");
 const ClearLeth = artifacts.require("./ClearLeth.sol");
 
 contract("ClearLeth", (accounts) => {
-    let [owner, employer, employer2, employee, employee2] = accounts;
+    let [
+        owner,
+        employer,
+        employer2,
+        employee,
+        employee2,
+        authority,
+        authority2,
+    ] = accounts;
 
     before(async () => {
         let initialLeaveAmount = 12;
@@ -16,11 +24,17 @@ contract("ClearLeth", (accounts) => {
     it("Test Contract Constructor", async () => {
         let employers = await clearLethInstance.getAllEmployers();
         assert.equal(employers[0], owner, "Owner of contract not an employer");
+        let ownerAddress = await clearLethInstance.contractOwner();
+        assert.equal(
+            ownerAddress,
+            owner,
+            "Contract deployer not declared as owner"
+        );
         let leaveAmount = await clearLethInstance.leaveAmount();
         assert.equal(leaveAmount, 12, "Leave amount not initialized correctly");
     });
 
-    // Test Case 2: Add/remove functions
+    // Test Case 2: Add/remove functions (Employee, Employer, Authority)
     it("Test Add and Remove functions", async () => {
         await clearLethInstance.addEmployer(employer, { from: owner });
         let employers = await clearLethInstance.getAllEmployers();
@@ -40,6 +54,14 @@ contract("ClearLeth", (accounts) => {
             employeesRemove.length,
             0,
             "Employee not removed successfuly"
+        );
+
+        await clearLethInstance.addAuthority(authority, { from: owner });
+        let authorityAdd = await clearLethInstance.getAllAuthorities();
+        assert.equal(
+            authorityAdd[0],
+            authority,
+            "Authority not added successfully"
         );
     });
 
@@ -68,6 +90,11 @@ contract("ClearLeth", (accounts) => {
             clearLethInstance.removeEmployee(employee, { from: employer2 }),
             "Only employer of this employee can call this function"
         );
+
+        await truffleAssert.reverts(
+            clearLethInstance.addAuthority(authority2, { from: employer }),
+            "Only the contract owner can call this function"
+        );
     });
 
     // Test Case 3: Applying/cancelling leaves
@@ -95,11 +122,9 @@ contract("ClearLeth", (accounts) => {
     it("Ensure only employees can apply leave & cancel leaves", async () => {
         let today = moment().unix();
         await truffleAssert.reverts(
-            clearLethInstance.applyLeave(
-                today,
-                web3.utils.asciiToHex("test"),
-                { from: employer }
-            ),
+            clearLethInstance.applyLeave(today, web3.utils.asciiToHex("test"), {
+                from: employer,
+            }),
             "Only employees can call this function"
         );
 
