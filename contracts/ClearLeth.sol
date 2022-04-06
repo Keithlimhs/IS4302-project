@@ -30,6 +30,7 @@ contract ClearLeth {
         rejected
     }
 
+
     struct employee {
         string name;
         address wallet;
