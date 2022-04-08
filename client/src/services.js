@@ -30,8 +30,29 @@ export const getContract = async () => {
   let abi = ClearLethContract.abi;
   let signer = provider.getSigner();
   let contractInstance = new ethers.Contract(contractAddress, abi, signer);
-  console.log(contractInstance);
   return contractInstance;
+};
+
+
+export const getMyInfo = async () => {
+  try {
+    let contractInstance = await getContract();
+    const name = await contractInstance.getUserName();
+    const company = await contractInstance.getUserCompany();
+    const wallet = await contractInstance.getUserWallet();
+    let role = await contractInstance.getUserRole();
+    if (role == 0) {
+      role = "Employee";
+    } else if (role == 1) {
+      role = "Employer";
+    } else {
+      role = "Authority";
+    }
+    let response = {name, company, wallet, role};
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const getAllEmployees = async () => {
@@ -76,8 +97,10 @@ export const addEmployee = async (address) => {
   try {
     let contractInstance = await getContract();
     const response = await contractInstance.addEmployee(address);
+    return response;
   } catch (error) {
     console.error(error);
+    return null;
   }
 };
 

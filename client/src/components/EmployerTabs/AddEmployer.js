@@ -21,9 +21,9 @@ import {
   Heading,
 } from "@chakra-ui/react";
 import { ethers } from "ethers";
-import { addEmployee } from "../../services";
+import { addEmployer } from "../../services";
 
-export default function AddEmployee({ setEmployees }) {
+export default function AddEmployer({ setEmployers }) {
   const { userAddress } = React.useContext(MetaContext);
   const [input, setInput] = useState("");
   const [status, setStatus] = useState("");
@@ -32,19 +32,19 @@ export default function AddEmployee({ setEmployees }) {
 
   useEffect(() => {}, []);
 
-  const handleAddEmployee = async () => {
-    let response = await addEmployee(input);
+  const handleAddEmployer = async () => {
+    let response = await addEmployer(input);
 
     if (response == null) {
       setStatus("error");
       setShowAlert(true);
-      setAlertMessage("Error adding employee!");
+      setAlertMessage("Error adding employer!");
     } else {
       setInput("");
       setStatus("success");
       setShowAlert(true);
-      setAlertMessage("Employee added!");
-      setEmployees((employees) => employees.concat(input));
+      setAlertMessage("Employer added!");
+      setEmployers((employers) => employers.concat(input));
     }
   };
 
@@ -55,7 +55,7 @@ export default function AddEmployee({ setEmployees }) {
   return (
     <Box p="2">
       <FormControl isRequired isInvalid={isError}>
-        <FormLabel htmlFor="address">Employee Address</FormLabel>
+        <FormLabel htmlFor="address">Employer Address</FormLabel>
         <Input id="address" value={input} onChange={handleInputChange} />
         {!isError ? (
           <FormHelperText>
@@ -66,7 +66,7 @@ export default function AddEmployee({ setEmployees }) {
         )}
       </FormControl>
       <Center>
-        <Button size="md" onClick={() => handleAddEmployee()}>
+        <Button size="md" onClick={() => handleAddEmployer()}>
           Register
         </Button>
       </Center>

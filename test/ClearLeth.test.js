@@ -34,6 +34,17 @@ contract("ClearLeth", (accounts) => {
         assert.equal(leaveAmount, 12, "Leave amount not initialized correctly");
     });
 
+    // Test Case 1.1: Test address to user information
+    it("Test User Information", async () => {
+        let ownerAddress = await clearLethInstance.contractOwner();
+        let name = await clearLethInstance.getUserName();
+        let wallet = await clearLethInstance.getUserWallet();
+        let company = await clearLethInstance.getUserCompany();
+        assert.equal(name, "Owner", "Name info stored correctly");
+        assert.equal(wallet, ownerAddress, "Wallet info stored correctly");
+        assert.equal(company, "NUS", "Company info stored correctly");
+    });
+
     // Test Case 2: Add/remove functions (Employee, Employer, Authority)
     it("Test Add and Remove functions", async () => {
         await clearLethInstance.addEmployer(employer, { from: owner });

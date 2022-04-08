@@ -24,7 +24,7 @@ export default function HomePage() {
       justifyContent={"space-between"}
     >
       <Heading fontSize="60px" my={8} textAlign="center">
-        Welcome to ClearLeth! 💠
+        Welcome to ClearLeth!
       </Heading>
 
       <Text fontSize="20px" m={5} textAlign="center">

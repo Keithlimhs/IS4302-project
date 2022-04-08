@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { MetaContext } from "../contexts/MetaContext";
 import {
   Box,
@@ -12,11 +12,14 @@ import {
   TabPanel,
   TabPanels,
 } from "@chakra-ui/react";
+import AddEmployer from "./EmployerTabs/AddEmployer";
 import AddEmployee from "./EmployerTabs/AddEmployee";
 import ViewEmployees from "./EmployerTabs/ViewEmployees";
+import MyInfo from "./MyInfo";
 
 export default function EmployerView() {
   const { userAddress } = React.useContext(MetaContext);
+  const [employees, setEmployees] = useState([]);
 
   return (
     <Box>
@@ -47,21 +50,29 @@ export default function EmployerView() {
           <Tabs>
             <TabList>
               <Tab>My Info</Tab>
+              <Tab>Add Employer</Tab>
+              <Tab>Add Employee</Tab>
               <Tab>View Employees</Tab>
-              <Tab>Add Employees</Tab>
               <Tab>View Leaves</Tab>
               <Tab>Set Rules</Tab>
             </TabList>
 
             <TabPanels>
               <TabPanel>
-                <p>one!</p>
+                <MyInfo />
               </TabPanel>
               <TabPanel>
-                <ViewEmployees />
+                <AddEmployer />
+              </TabPanel>
+
+              <TabPanel>
+                <AddEmployee setEmployees={setEmployees} />
               </TabPanel>
               <TabPanel>
-                <AddEmployee />
+                <ViewEmployees
+                  setEmployees={setEmployees}
+                  employees={employees}
+                />
               </TabPanel>
               <TabPanel>
                 <p>three!</p>

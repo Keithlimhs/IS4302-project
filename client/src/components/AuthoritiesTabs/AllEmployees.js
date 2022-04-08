@@ -16,7 +16,7 @@ import {
   Heading,
 } from "@chakra-ui/react";
 
-export default function allEmployees() {
+export default function AllEmployees() {
   const { userAddress, contractInstance } = React.useContext(MetaContext);
   const [myEmployees, setMyEmployees] = useState([]);
   const [numEmployees, setNumEmployees] = useState("");

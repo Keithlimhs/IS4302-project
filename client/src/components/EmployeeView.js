@@ -17,9 +17,9 @@ import {
   FormErrorMessage,
   FormHelperText,
 } from "@chakra-ui/react";
-import EmployeeDetails from "./EmployeeDetails";
 
 import { getContract } from "../services";
+import MyInfo from "./MyInfo";
 
 
 export default function EmployeeView() {
@@ -71,7 +71,7 @@ export default function EmployeeView() {
 
             <TabPanels>
               <TabPanel>
-                <EmployeeDetails item={2}></EmployeeDetails>
+                <MyInfo item={2}></MyInfo>
               </TabPanel>
               <TabPanel>
                 <FormControl isInvalid={isError}>

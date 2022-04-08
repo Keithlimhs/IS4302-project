@@ -28,9 +28,8 @@ import {
 import { ethers } from "ethers";
 import { getAllEmployees } from "../../services";
 
-export default function ViewEmployees() {
+export default function ViewEmployees({setEmployees, employees}) {
   const { userAddress } = React.useContext(MetaContext);
-  const [employees, setEmployees] = useState([]);
   /*   const [input, setInput] = useState("");
   const [status, setStatus] = useState("");
   const [showAlert, setShowAlert] = useState(false); */

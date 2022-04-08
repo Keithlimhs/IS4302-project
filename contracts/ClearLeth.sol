@@ -8,10 +8,10 @@ contract ClearLeth {
     address[] employees;
     address[] authorities;
 
-    mapping(address => role) addressToRole;
+    mapping(address => user) public addressToUser;
 
-    mapping(address => address) employeeToEmployer;
-    mapping(address => address[]) employerToEmployee;
+    mapping(address => address) public employeeToEmployer;
+    mapping(address => address[]) public employerToEmployee;
 
     uint256 public numOfEmployees = 0;
     uint256 public numOfEmployers = 0;
@@ -30,21 +30,10 @@ contract ClearLeth {
         rejected
     }
 
-
-    struct employee {
+    struct user {
         string name;
         address wallet;
-        uint256 employeeId;
-        uint256 companyId;
-        role role;
-
-    }
-
-    struct employer {
-        string name;
-        address wallet;
-        uint256 employerId;
-        uint256 companyId;
+        string company;
         role role;
     }
 
@@ -77,7 +66,11 @@ contract ClearLeth {
         contractOwner = msg.sender;
         employers.push(msg.sender);
         numOfEmployers++;
-        addressToRole[msg.sender] = role.employer;
+
+        // new user object
+        user memory newUser = user("Owner", msg.sender, "NUS", role.employer);
+
+        addressToUser[msg.sender] = newUser;
         leaveAmount = _leaveAmount;
     }
 
@@ -107,7 +100,7 @@ contract ClearLeth {
 
     modifier isEmployer() {
         require(
-            addressToRole[msg.sender] == role.employer,
+            addressToUser[msg.sender].role == role.employer,
             "Only an employer can call this function"
         );
         _;
@@ -115,7 +108,7 @@ contract ClearLeth {
 
     modifier isEmployee() {
         require(
-            addressToRole[msg.sender] == role.employee,
+            addressToUser[msg.sender].role == role.employee,
             "Only employees can call this function"
         );
         _;
@@ -123,7 +116,7 @@ contract ClearLeth {
 
     modifier isAuthority() {
         require(
-            addressToRole[msg.sender] == role.authority,
+            addressToUser[msg.sender].role == role.authority,
             "Only authorities can call this function"
         );
         _;
@@ -150,24 +143,53 @@ contract ClearLeth {
         _;
     }
 
-    function addEmployer(address _employerAddress) public isEmployer {
+    function getUserName() public view returns (string memory) {
+        return addressToUser[msg.sender].name;
+    }
+
+    function getUserCompany() public view returns (string memory) {
+        return addressToUser[msg.sender].company;
+    }
+
+    function getUserWallet() public view returns (address) {
+        return addressToUser[msg.sender].wallet;
+    }
+
+    function getUserRole() public view returns (role) {
+        return addressToUser[msg.sender].role;
+    }
+
+    function addEmployer(string memory _company, string memory _employerName, address _employerAddress) public isEmployer {
         employers.push(_employerAddress);
-        addressToRole[_employerAddress] = role.employer;
+
+        // new user object
+        user memory newUser = user(_employerName, _employerAddress, _company, role.employer);
+
+        addressToUser[_employerAddress] = newUser;
         numOfEmployers++;
     }
 
-    function addEmployee(address _employeeAddress) public isEmployer {
+    function addEmployee(string memory _employeeName, address _employeeAddress) public isEmployer {
         employees.push(_employeeAddress);
-        addressToRole[_employeeAddress] = role.employee;
+
+        // new user object
+        string memory company = addressToUser[msg.sender].company;
+        user memory newUser = user(_employeeName, msg.sender, company, role.employee);
+
+        addressToUser[_employeeAddress] = newUser;
         employerToEmployee[msg.sender].push(_employeeAddress);
         employeeToEmployer[_employeeAddress] = msg.sender;
         employeeLeaveBalance[_employeeAddress] = leaveAmount;
         numOfEmployees++;
     }
 
-    function addAuthority(address _authorityAddress) public isOwner {
+    function addAuthority(string memory _authorityName, address _authorityAddress) public isOwner {
         authorities.push(_authorityAddress);
-        addressToRole[_authorityAddress] = role.authority;
+
+        // new user object
+        user memory newUser = user(_authorityName, msg.sender, "", role.authority);
+
+        addressToUser[_authorityAddress] = newUser;
         numOfAuthorities++;
     }
 
@@ -193,7 +215,7 @@ contract ClearLeth {
             }
         }
 
-        delete addressToRole[_employeeAddress];
+        delete addressToUser[_employeeAddress];
         delete employeeToEmployer[_employeeAddress];
         delete employeeToLeaves[_employeeAddress];
         delete employeeLeaveBalance[_employeeAddress];
@@ -316,6 +338,7 @@ contract ClearLeth {
         return employeeLeaveBalance[msg.sender];
     }
 
+// this method i think cannot return a struct? - ryan
     function getLeaveInformation(uint256 leaveId)
         public
         view
