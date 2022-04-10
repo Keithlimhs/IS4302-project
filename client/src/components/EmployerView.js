@@ -15,11 +15,13 @@ import {
 import AddEmployer from "./EmployerTabs/AddEmployer";
 import AddEmployee from "./EmployerTabs/AddEmployee";
 import ViewEmployees from "./EmployerTabs/ViewEmployees";
+import ViewEmployers from "./EmployerTabs/ViewEmployers";
 import MyInfo from "./MyInfo";
 
 export default function EmployerView() {
   const { userAddress } = React.useContext(MetaContext);
   const [employees, setEmployees] = useState([]);
+  const [employers, setEmployers] = useState([]);
 
   return (
     <Box>
@@ -52,6 +54,7 @@ export default function EmployerView() {
               <Tab>My Info</Tab>
               <Tab>Add Employer</Tab>
               <Tab>Add Employee</Tab>
+              <Tab>View Employers</Tab>
               <Tab>View Employees</Tab>
               <Tab>View Leaves</Tab>
               <Tab>Set Rules</Tab>
@@ -62,11 +65,16 @@ export default function EmployerView() {
                 <MyInfo />
               </TabPanel>
               <TabPanel>
-                <AddEmployer />
+                <AddEmployer setEmployers={setEmployers} />
               </TabPanel>
-
               <TabPanel>
                 <AddEmployee setEmployees={setEmployees} />
+              </TabPanel>
+              <TabPanel>
+                <ViewEmployers
+                  setEmployers={setEmployers}
+                  employers={employers}
+                />
               </TabPanel>
               <TabPanel>
                 <ViewEmployees
@@ -75,10 +83,10 @@ export default function EmployerView() {
                 />
               </TabPanel>
               <TabPanel>
-                <p>three!</p>
+                <p>four!</p>
               </TabPanel>
               <TabPanel>
-                <p>four!</p>
+                <p>five!</p>
               </TabPanel>
             </TabPanels>
           </Tabs>

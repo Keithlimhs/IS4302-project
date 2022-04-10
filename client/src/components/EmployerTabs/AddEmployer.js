@@ -25,38 +25,58 @@ import { addEmployer } from "../../services";
 
 export default function AddEmployer({ setEmployers }) {
   const { userAddress } = React.useContext(MetaContext);
-  const [input, setInput] = useState("");
+  const [inputCompany, setInputCompany] = useState("");
+  const [inputAddress, setInputAddress] = useState("");
+  const [inputName, setInputName] = useState("");
   const [status, setStatus] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {}, []);
 
+  const handleRejection = async () => {
+    setStatus("error");
+    setShowAlert(true);
+    setAlertMessage("Error adding employer!");
+  };
+
   const handleAddEmployer = async () => {
-    let response = await addEmployer(input);
+    if (inputCompany === "" || inputName === "" || inputAddress === "") {
+      handleRejection();
+      return;
+    }
+
+    let response = await addEmployer(inputCompany, inputName, inputAddress);
 
     if (response == null) {
-      setStatus("error");
-      setShowAlert(true);
-      setAlertMessage("Error adding employer!");
+      handleRejection();
     } else {
-      setInput("");
+      setInputCompany("");
+      setInputAddress("");
+      setInputName("");
       setStatus("success");
       setShowAlert(true);
       setAlertMessage("Employer added!");
-      setEmployers((employers) => employers.concat(input));
+      setEmployers((employers) => employers.concat(inputAddress));
     }
   };
 
-  const handleInputChange = (e) => setInput(e.target.value);
+  const handleInputCompanyChange = (e) => setInputCompany(e.target.value);
+  const handleInputAddressChange = (e) => setInputAddress(e.target.value);
+  const handleInputNameChange = (e) => setInputName(e.target.value);
 
-  const isError = input === "";
+  const isError = inputCompany  === "" || inputAddress  === "" || inputName === "";
 
   return (
     <Box p="2">
       <FormControl isRequired isInvalid={isError}>
+        <FormLabel htmlFor="company">Company</FormLabel>
+        <Input id="company" value={inputCompany} onChange={handleInputCompanyChange} />
         <FormLabel htmlFor="address">Employer Address</FormLabel>
-        <Input id="address" value={input} onChange={handleInputChange} />
+        <Input id="address" value={inputAddress} onChange={handleInputAddressChange} />
+        <FormLabel htmlFor="name">Employer Name</FormLabel>
+        <Input id="name" value={inputName} onChange={handleInputNameChange} />
+
         {!isError ? (
           <FormHelperText>
             Choose carefully! It's on the blockchain!

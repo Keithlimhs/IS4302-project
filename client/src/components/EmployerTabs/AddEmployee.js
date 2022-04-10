@@ -19,44 +19,63 @@ import {
   FormHelperText,
   Flex,
   Heading,
+  Spacer,
 } from "@chakra-ui/react";
 import { ethers } from "ethers";
 import { addEmployee } from "../../services";
 
 export default function AddEmployee({ setEmployees }) {
   const { userAddress } = React.useContext(MetaContext);
-  const [input, setInput] = useState("");
+  const [inputAddress, setInputAddress] = useState("");
+  const [inputName, setInputName] = useState("");
   const [status, setStatus] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {}, []);
 
+  const handleRejection = async () => {
+    setStatus("error");
+    setShowAlert(true);
+    setAlertMessage("Error adding employee!");
+  };
+
   const handleAddEmployee = async () => {
-    let response = await addEmployee(input);
+    if (inputName === "" || inputAddress === "") {
+      handleRejection();
+      return;
+    }
+
+    let response = await addEmployee(inputName, inputAddress);
 
     if (response == null) {
-      setStatus("error");
-      setShowAlert(true);
-      setAlertMessage("Error adding employee!");
+      handleRejection();
     } else {
-      setInput("");
+      setInputAddress("");
+      setInputName("");
       setStatus("success");
       setShowAlert(true);
       setAlertMessage("Employee added!");
-      setEmployees((employees) => employees.concat(input));
+      setEmployees((employees) => employees.concat(inputAddress));
     }
   };
 
-  const handleInputChange = (e) => setInput(e.target.value);
+  const handleInputAddressChange = (e) => setInputAddress(e.target.value);
+  const handleInputNameChange = (e) => setInputName(e.target.value);
 
-  const isError = input === "";
+  const isError = inputAddress  === "" || inputName === "";
 
   return (
     <Box p="2">
       <FormControl isRequired isInvalid={isError}>
         <FormLabel htmlFor="address">Employee Address</FormLabel>
-        <Input id="address" value={input} onChange={handleInputChange} />
+        <Input
+          id="address"
+          value={inputAddress}
+          onChange={handleInputAddressChange}
+        />
+        <FormLabel htmlFor="name">Employee Name</FormLabel>
+        <Input id="name" value={inputName} onChange={handleInputNameChange} />
         {!isError ? (
           <FormHelperText>
             Choose carefully! It's on the blockchain!

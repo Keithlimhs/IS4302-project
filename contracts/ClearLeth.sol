@@ -54,7 +54,7 @@ contract ClearLeth {
     mapping(uint256 => uint256) datesToEmployeesApplied;
     mapping(address => uint256) employersToLeaveLimit;
 
-    event LeaveApplied(address employee, uint256 date);
+    event LeaveApplied(address employee);
     event LeaveApproved(address employee, address employer, uint256 leaveId);
     event LeaveCancelled(address employee, uint256 leaveId);
     event LeaveRejected(address employee, address employer, uint256 leaveId);
@@ -159,22 +159,39 @@ contract ClearLeth {
         return addressToUser[msg.sender].role;
     }
 
-    function addEmployer(string memory _company, string memory _employerName, address _employerAddress) public isEmployer {
+    function addEmployer(
+        string memory _company,
+        string memory _employerName,
+        address _employerAddress
+    ) public isEmployer {
         employers.push(_employerAddress);
 
         // new user object
-        user memory newUser = user(_employerName, _employerAddress, _company, role.employer);
+        user memory newUser = user(
+            _employerName,
+            _employerAddress,
+            _company,
+            role.employer
+        );
 
         addressToUser[_employerAddress] = newUser;
         numOfEmployers++;
     }
 
-    function addEmployee(string memory _employeeName, address _employeeAddress) public isEmployer {
+    function addEmployee(string memory _employeeName, address _employeeAddress)
+        public
+        isEmployer
+    {
         employees.push(_employeeAddress);
 
         // new user object
         string memory company = addressToUser[msg.sender].company;
-        user memory newUser = user(_employeeName, msg.sender, company, role.employee);
+        user memory newUser = user(
+            _employeeName,
+            msg.sender,
+            company,
+            role.employee
+        );
 
         addressToUser[_employeeAddress] = newUser;
         employerToEmployee[msg.sender].push(_employeeAddress);
@@ -183,11 +200,19 @@ contract ClearLeth {
         numOfEmployees++;
     }
 
-    function addAuthority(string memory _authorityName, address _authorityAddress) public isOwner {
+    function addAuthority(
+        string memory _authorityName,
+        address _authorityAddress
+    ) public isOwner {
         authorities.push(_authorityAddress);
 
         // new user object
-        user memory newUser = user(_authorityName, msg.sender, "", role.authority);
+        user memory newUser = user(
+            _authorityName,
+            msg.sender,
+            "",
+            role.authority
+        );
 
         addressToUser[_authorityAddress] = newUser;
         numOfAuthorities++;
@@ -259,19 +284,25 @@ contract ClearLeth {
         return authoritiesArray;
     }
 
-    function applyLeave(uint256 date, bytes32 reason) public isEmployee {
-        leave memory newLeave = leave(
-            numLeaves,
-            date,
-            reason,
-            leaveStatus.pending,
-            msg.sender
-        );
+    function applyLeaves(uint256[] memory dates, bytes32[] memory reason)
+        public
+        isEmployee
+    {
+        for (uint256 i = 0; i < dates.length; i++) {
+            leave memory newLeave = leave(
+                numLeaves,
+                dates[i],
+                reason[i],
+                leaveStatus.pending,
+                msg.sender
+            );
 
-        numLeaves++;
-        employeeToLeaves[msg.sender].push(newLeave);
-        allLeaves.push(newLeave);
-        emit LeaveApplied(msg.sender, date);
+            numLeaves++;
+            employeeToLeaves[msg.sender].push(newLeave);
+            allLeaves.push(newLeave);
+        }
+
+        emit LeaveApplied(msg.sender);
     }
 
     function cancelLeave(leave memory _leave)
@@ -338,7 +369,7 @@ contract ClearLeth {
         return employeeLeaveBalance[msg.sender];
     }
 
-// this method i think cannot return a struct? - ryan
+    // this method i think cannot return a struct? - ryan
     function getLeaveInformation(uint256 leaveId)
         public
         view

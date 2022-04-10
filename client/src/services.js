@@ -59,7 +59,6 @@ export const getAllEmployees = async () => {
   try {
     let contractInstance = await getContract();
     const response = await contractInstance.getAllEmployees();
-    console.log(response);
     return response;
   } catch (error) {
     console.error(error);
@@ -70,6 +69,7 @@ export const getAllEmployers = async () => {
   try {
     let contractInstance = await getContract();
     const response = await contractInstance.getAllEmployers();
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -79,6 +79,7 @@ export const getAllAuthorities = async () => {
   try {
     let contractInstance = await getContract();
     const response = await contractInstance.getAllAuthorities();
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -88,15 +89,16 @@ export const getEmployeeLeaveBalance = async (address) => {
   try {
     let contractInstance = await getContract();
     const response = await contractInstance.employeeLeaveBalance(address);
+    return response;
   } catch (error) {
     console.error(error);
   }
 };
 
-export const addEmployee = async (address) => {
+export const addEmployee = async (name, address) => {
   try {
     let contractInstance = await getContract();
-    const response = await contractInstance.addEmployee(address);
+    const response = await contractInstance.addEmployee(name, address);
     return response;
   } catch (error) {
     console.error(error);
@@ -104,10 +106,31 @@ export const addEmployee = async (address) => {
   }
 };
 
-export const addEmployer = async (address) => {
+export const addEmployer = async (company, name, address) => {
   try {
     let contractInstance = await getContract();
-    const response = await contractInstance.addEmployer(address);
+    const response = await contractInstance.addEmployer(company, name, address);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const addAuthority = async (name, address) => {
+  try {
+    let contractInstance = await getContract();
+    const response = await contractInstance.addEmployer(name, address);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const applyLeaves = async (dates, reasons) => {
+  try {
+    let contractInstance = await getContract();
+    const response = await contractInstance.applyLeaves(dates, reasons);
+    return response;
   } catch (error) {
     console.error(error);
   }
