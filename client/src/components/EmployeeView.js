@@ -18,37 +18,39 @@ import {
   FormHelperText,
 } from "@chakra-ui/react";
 
-import { getContract } from "../services";
 import MyInfo from "./MyInfo";
-
+import { getMyInfo, getOwnerAddress } from "../services";
 
 export default function EmployeeView() {
   const { userAddress } = React.useContext(MetaContext);
-  const [input, setInput] = useState('')
-
-  const handleInputChange = (e) => setInput(e.target.value)
-
+  const [myInfo, setMyInfo] = useState(null);
+  const [accessRight, setAccessRight] = useState(false);
 
   useEffect(() => {
-
+    initView();
   }, []);
 
-
-  const isError = input === ''
+  const initView = async () => {
+    let infoResult = await getMyInfo();
+    if (infoResult == null) {
+      return;
+    }
+    let ownerAddress = await getOwnerAddress();
+    if (infoResult.role == "Employee" || infoResult.wallet == ownerAddress) {
+      console.log("Accessed!");
+      setAccessRight(true);
+    }
+    setMyInfo(infoResult);
+  };
+  
 
   return (
-    <Box>
+    <>
       <Center bg="brand.gold">
         <Heading color="white" m={6}>
           Employee
         </Heading>
       </Center>
-      <Center>
-        <Heading size="md" pt={5}>
-          {userAddress}
-        </Heading>
-      </Center>
-
       <Flex
         borderWidth="1px"
         borderRadius="lg"
@@ -58,46 +60,51 @@ export default function EmployeeView() {
         flexDirection="column"
         boxShadow="md"
       >
-        <Box p={3}>
-          <Heading size="lg" p={5}>
-            Leave Management
-          </Heading>
-          <Tabs>
-            <TabList>
-              <Tab>My Info</Tab>
-              <Tab>Apply Leaves</Tab>
-              <Tab>View Leaves</Tab>
-            </TabList>
-
-            <TabPanels>
-              <TabPanel>
-                <MyInfo item={2}></MyInfo>
-              </TabPanel>
-              <TabPanel>
-                <FormControl isInvalid={isError}>
-                  <FormLabel htmlFor="date">Date</FormLabel>
-                  <Input
-                    id="date"
-                    type="date"
-                    value={input}
-                    onChange={handleInputChange}
-                  />
-                  {!isError ? (
-                    <FormHelperText>
-                      Choose carefully! It's on the blockchain!
-                    </FormHelperText>
-                  ) : (
-                    <FormErrorMessage>Dates are required.</FormErrorMessage>
-                  )}
-                </FormControl>
-              </TabPanel>
-              <TabPanel>
-                <p>three!</p>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </Box>
+        <MyInfo myInfo={myInfo} />
       </Flex>
-    </Box>
+      {accessRight && (
+        <Box>
+          <Flex
+            borderWidth="1px"
+            borderRadius="lg"
+            m={5}
+            px={10}
+            overflow="hidden"
+            flexDirection="column"
+            boxShadow="md"
+          >
+            <Box p={3}>
+              <Heading size="lg" py="5">
+                Leave Management
+              </Heading>
+              <Tabs>
+                <TabList>
+                  <Tab>Apply Leaves</Tab>
+                  <Tab>View Leaves</Tab>
+                </TabList>
+
+                <TabPanels>
+                  <TabPanel>
+                    <p>two!</p>
+                  </TabPanel>
+                  <TabPanel>
+                    <p>three!</p>
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
+            </Box>
+          </Flex>
+          <br />
+        </Box>
+      )}
+
+      {!accessRight && (
+        <Center>
+          <Heading>Sorry, you do not have access!</Heading>
+        </Center>
+      )}
+      <br />
+      <br />
+    </>
   );
 }

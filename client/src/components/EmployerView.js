@@ -14,28 +14,61 @@ import {
 } from "@chakra-ui/react";
 import AddEmployer from "./EmployerTabs/AddEmployer";
 import AddEmployee from "./EmployerTabs/AddEmployee";
-import ViewEmployees from "./EmployerTabs/ViewEmployees";
-import ViewEmployers from "./EmployerTabs/ViewEmployers";
+import ViewEmployees from "./ViewTabs/ViewEmployees";
+import ViewEmployers from "./ViewTabs/ViewEmployers";
 import MyInfo from "./MyInfo";
+import {
+  getMyInfo,
+  getOwnerAddress,
+  getAllEmployees,
+  getAllEmployers,
+} from "../services";
 
 export default function EmployerView() {
   const { userAddress } = React.useContext(MetaContext);
   const [employees, setEmployees] = useState([]);
   const [employers, setEmployers] = useState([]);
+  const [myInfo, setMyInfo] = useState(null);
+  const [accessRight, setAccessRight] = useState(false);
+
+  useEffect(() => {
+    initView();
+  }, []);
+
+  const initEmployees = async () => {
+    getAllEmployees().then((e) => {
+      setEmployees(e);
+    });
+  };
+
+  const initEmployers = async () => {
+    getAllEmployers().then((e) => {
+      setEmployers(e);
+    });
+  };
+
+  const initView = async () => {
+    let infoResult = await getMyInfo();
+    if (infoResult == null) {
+      return;
+    }
+    let ownerAddress = await getOwnerAddress();
+    if (infoResult.role == "Employer" || infoResult.wallet == ownerAddress) {
+      console.log("Accessed!");
+      setAccessRight(true);
+    }
+    setMyInfo(infoResult);
+    initEmployees();
+    initEmployers();
+  };
 
   return (
-    <Box>
+    <>
       <Center bg="brand.gold">
         <Heading color="white" m={6}>
           Employer
         </Heading>
       </Center>
-      <Center>
-        <Heading size="md" pt={5}>
-          {userAddress}
-        </Heading>
-      </Center>
-
       <Flex
         borderWidth="1px"
         borderRadius="lg"
@@ -45,53 +78,75 @@ export default function EmployerView() {
         flexDirection="column"
         boxShadow="md"
       >
-        <Box p={3}>
-          <Heading size="lg" p={5}>
-            Leave Management
-          </Heading>
-          <Tabs>
-            <TabList>
-              <Tab>My Info</Tab>
-              <Tab>Add Employer</Tab>
-              <Tab>Add Employee</Tab>
-              <Tab>View Employers</Tab>
-              <Tab>View Employees</Tab>
-              <Tab>View Leaves</Tab>
-              <Tab>Set Rules</Tab>
-            </TabList>
-
-            <TabPanels>
-              <TabPanel>
-                <MyInfo />
-              </TabPanel>
-              <TabPanel>
-                <AddEmployer setEmployers={setEmployers} />
-              </TabPanel>
-              <TabPanel>
-                <AddEmployee setEmployees={setEmployees} />
-              </TabPanel>
-              <TabPanel>
-                <ViewEmployers
-                  setEmployers={setEmployers}
-                  employers={employers}
-                />
-              </TabPanel>
-              <TabPanel>
-                <ViewEmployees
-                  setEmployees={setEmployees}
-                  employees={employees}
-                />
-              </TabPanel>
-              <TabPanel>
-                <p>four!</p>
-              </TabPanel>
-              <TabPanel>
-                <p>five!</p>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </Box>
+        <MyInfo myInfo={myInfo} />
       </Flex>
-    </Box>
+      {accessRight && (
+        <Box>
+          <Flex
+            borderWidth="1px"
+            borderRadius="lg"
+            m={5}
+            px={10}
+            overflow="hidden"
+            flexDirection="column"
+            boxShadow="md"
+          >
+            <Box p={3}>
+              <Heading size="lg" py="5">
+                Leave Management
+              </Heading>
+              <Tabs>
+                <TabList>
+                  <Tab>Add Employer</Tab>
+                  <Tab>Add Employee</Tab>
+                  <Tab>View Employers</Tab>
+                  <Tab>View Employees</Tab>
+                  <Tab>View Leaves</Tab>
+                  <Tab>Set Rules</Tab>
+                </TabList>
+
+                <TabPanels>
+                  <TabPanel>
+                    <AddEmployer
+                      setEmployers={setEmployers}
+                      employers={employers}
+                    />
+                  </TabPanel>
+                  <TabPanel>
+                    <AddEmployee
+                      setEmployees={setEmployees}
+                      employees={employees}
+                    />
+                  </TabPanel>
+                  <TabPanel>
+                    <ViewEmployers
+                      setEmployers={setEmployers}
+                      employers={employers}
+                    />
+                  </TabPanel>
+                  <TabPanel>
+                    <ViewEmployees employees={employees} />
+                  </TabPanel>
+                  <TabPanel>
+                    <p>four!</p>
+                  </TabPanel>
+                  <TabPanel>
+                    <p>five!</p>
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
+            </Box>
+          </Flex>
+          <br />
+        </Box>
+      )}
+      {!accessRight && (
+        <Center>
+          <Heading>Sorry, you do not have access!</Heading>
+        </Center>
+      )}
+      <br />
+      <br />
+    </>
   );
 }

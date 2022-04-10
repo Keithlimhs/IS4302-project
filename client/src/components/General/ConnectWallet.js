@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { Box, Button, Container, Flex, Wrap } from "@chakra-ui/react";
 import { RiWallet3Line } from "react-icons/ri";
-import { loadWeb3 } from "../services.js";
-import { MetaContext } from "../contexts/MetaContext";
+import { loadWeb3 } from "../../services.js";
+import { MetaContext } from "../../contexts/MetaContext";
 
 export default function ConnectWallet({setUserAddress}) {
   const { userAddress } = React.useContext(MetaContext);

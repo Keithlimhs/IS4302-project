@@ -26,47 +26,30 @@ import {
   List,
 } from "@chakra-ui/react";
 import { ethers } from "ethers";
-import { getAllEmployers } from "../../services";
+import { getAllEmployees } from "../../services";
 
-export default function ViewEmployers({ setEmployers, employers }) {
+export default function ViewEmployees({employees}) {
   const { userAddress } = React.useContext(MetaContext);
-  /*   const [input, setInput] = useState("");
-  const [status, setStatus] = useState("");
-  const [showAlert, setShowAlert] = useState(false); */
 
-  useEffect(() => {
-    initView();
-  }, []);
-
-  const initView = async () => {
-    getAllEmployers().then((e) => {
-      setEmployers(e);
-      /*       setStatus("success");
-      setShowAlert(true); */
-    });
-  };
-
-  /*   const handleInputChange = (e) => setInput(e.target.value);
-
-  const isError = input === ""; */
 
   return (
     <Box p="2">
       <TableContainer>
-        <Heading>Company: </Heading>
         <Table variant="simple">
           <Thead>
             <Tr>
               <Th>Address</Th>
               <Th>Name</Th>
+              <Th>Limit</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {employers != null &&
-              employers.map((i) => (
-                <Tr key={i}>
-                  <Td>{i}</Td>
-                  <Td>{i}</Td>
+            {employees != null &&
+              employees.map((i) => (
+                <Tr key={i.address} >
+                  <Td>{i.address}</Td>
+                  <Td>{i.name}</Td>
+                  <Td>10</Td>
                 </Tr>
               ))}
           </Tbody>

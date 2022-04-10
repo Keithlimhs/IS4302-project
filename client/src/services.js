@@ -33,6 +33,15 @@ export const getContract = async () => {
   return contractInstance;
 };
 
+export const getOwnerAddress = async () => {
+  try {
+    let contractInstance = await getContract();
+    const response = await contractInstance.contractOwner();
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 export const getMyInfo = async () => {
   try {
@@ -55,11 +64,27 @@ export const getMyInfo = async () => {
   }
 };
 
-export const getAllEmployees = async () => {
+export const getNameOfAddress = async (address) => {
   try {
     let contractInstance = await getContract();
-    const response = await contractInstance.getAllEmployees();
-    return response;
+    const name = await contractInstance.getUserNameOf(address);
+    return name;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getAllEmployees = async () => {
+  try {
+    let result = [];
+    let contractInstance = await getContract();
+    const employees = await contractInstance.getAllEmployees();
+    for (let i = 0; i < employees.length; i++) {
+      let address = employees[i];
+      let name = await contractInstance.getUserNameOf(address);
+      result.push({name, address});
+    }
+    return result;
   } catch (error) {
     console.error(error);
   }
@@ -67,9 +92,15 @@ export const getAllEmployees = async () => {
 
 export const getAllEmployers = async () => {
   try {
+    let result = [];
     let contractInstance = await getContract();
-    const response = await contractInstance.getAllEmployers();
-    return response;
+    let employers = await contractInstance.getAllEmployers();
+    for (let i = 0; i < employers.length; i++) {
+      let address = employers[i];
+      let name = await contractInstance.getUserNameOf(address);
+      result.push({name, address});
+    }
+    return result;
   } catch (error) {
     console.error(error);
   }
@@ -77,9 +108,15 @@ export const getAllEmployers = async () => {
 
 export const getAllAuthorities = async () => {
   try {
+    let result = [];
     let contractInstance = await getContract();
-    const response = await contractInstance.getAllAuthorities();
-    return response;
+    const authorities = await contractInstance.getAllAuthorities();
+    for (let i = 0; i < authorities.length; i++) {
+      let address = authorities[i];
+      let name = await contractInstance.getUserNameOf(address);
+      result.push({name, address});
+    }
+    return result;
   } catch (error) {
     console.error(error);
   }
@@ -119,13 +156,15 @@ export const addEmployer = async (company, name, address) => {
 export const addAuthority = async (name, address) => {
   try {
     let contractInstance = await getContract();
-    const response = await contractInstance.addEmployer(name, address);
+    const response = await contractInstance.addAuthority(name, address);
     return response;
   } catch (error) {
     console.error(error);
   }
 };
 
+
+// TAKES IN ARRAY OF DATES AND REASONS
 export const applyLeaves = async (dates, reasons) => {
   try {
     let contractInstance = await getContract();

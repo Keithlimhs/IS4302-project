@@ -26,33 +26,30 @@ import {
   List,
 } from "@chakra-ui/react";
 import { ethers } from "ethers";
-import { getMyInfo } from "../services";
 
-export default function MyInfo() {
+export default function MyInfo({ myInfo }) {
   const { userAddress } = React.useContext(MetaContext);
-  const [myInfo, setMyInfo] = useState(null);
-
-  useEffect(() => {
-    initView();
-  }, []);
-
-  const initView = async () => {
-    getMyInfo().then((e) => {
-    console.log(e);
-      setMyInfo(e);
-    });
-  };
 
   return (
     <Box p="2">
       {myInfo != null && (
         <Box>
-          <Text fontSize="md">{myInfo.name}</Text>
-          <Text fontSize="md">{myInfo.company}</Text>
-          <Text fontSize="md">{myInfo.wallet}</Text>
-          <Text fontSize="md">{myInfo.role}</Text>
+          <Heading size="lg" py="5">
+            My Information
+          </Heading>
+          <Text fontSize="md">
+            <b>Name:</b> {myInfo.name}
+          </Text>
+          <Text fontSize="md">
+            <b>Company:</b> {myInfo.company}
+          </Text>
+          <Text fontSize="md">
+            <b>Address:</b> {myInfo.wallet}
+          </Text>
+          <br></br>
         </Box>
       )}
+      {myInfo == null && <Heading> Please Login to Metamask!</Heading>}
     </Box>
   );
 }

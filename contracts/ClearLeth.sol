@@ -143,8 +143,22 @@ contract ClearLeth {
         _;
     }
 
+    // CHECK IF USER HAS ALREADY BEEN ADDED
+    modifier notAdded(address _employerAddress) {
+        require(
+            addressToUser[_employerAddress].wallet == address(0), 
+            "User has already been added!"
+        );
+        _;
+    } 
+
+
     function getUserName() public view returns (string memory) {
         return addressToUser[msg.sender].name;
+    }
+
+    function getUserNameOf(address _userAddress) public view returns (string memory) {
+        return addressToUser[_userAddress].name;
     }
 
     function getUserCompany() public view returns (string memory) {
@@ -163,7 +177,7 @@ contract ClearLeth {
         string memory _company,
         string memory _employerName,
         address _employerAddress
-    ) public isEmployer {
+    ) public isEmployer notAdded(_employerAddress) {
         employers.push(_employerAddress);
 
         // new user object
@@ -180,7 +194,7 @@ contract ClearLeth {
 
     function addEmployee(string memory _employeeName, address _employeeAddress)
         public
-        isEmployer
+        isEmployer notAdded(_employeeAddress)
     {
         employees.push(_employeeAddress);
 
@@ -203,7 +217,7 @@ contract ClearLeth {
     function addAuthority(
         string memory _authorityName,
         address _authorityAddress
-    ) public isOwner {
+    ) public isOwner notAdded(_authorityAddress) {
         authorities.push(_authorityAddress);
 
         // new user object

@@ -23,7 +23,7 @@ import {
 import { ethers } from "ethers";
 import { addEmployer } from "../../services";
 
-export default function AddEmployer({ setEmployers }) {
+export default function AddEmployer({ employers, setEmployers }) {
   const { userAddress } = React.useContext(MetaContext);
   const [inputCompany, setInputCompany] = useState("");
   const [inputAddress, setInputAddress] = useState("");
@@ -57,7 +57,7 @@ export default function AddEmployer({ setEmployers }) {
       setStatus("success");
       setShowAlert(true);
       setAlertMessage("Employer added!");
-      setEmployers((employers) => employers.concat(inputAddress));
+      setEmployers(employers.concat({company: inputCompany, name: inputName, address: inputAddress}));
     }
   };
 

@@ -22,9 +22,9 @@ import {
   Spacer,
 } from "@chakra-ui/react";
 import { ethers } from "ethers";
-import { addEmployee } from "../../services";
+import { addAuthority } from "../../services";
 
-export default function AddEmployee({ employees, setEmployees }) {
+export default function AddAuthorities({ authorities, setAuthorities }) {
   const { userAddress } = React.useContext(MetaContext);
   const [inputAddress, setInputAddress] = useState("");
   const [inputName, setInputName] = useState("");
@@ -40,13 +40,13 @@ export default function AddEmployee({ employees, setEmployees }) {
     setAlertMessage("Error adding employee!");
   };
 
-  const handleAddEmployee = async () => {
+  const handleAddAuthorities = async () => {
     if (inputName === "" || inputAddress === "") {
       handleRejection();
       return;
     }
 
-    let response = await addEmployee(inputName, inputAddress);
+    let response = await addAuthority(inputName, inputAddress);
 
     if (response == null) {
       handleRejection();
@@ -55,8 +55,8 @@ export default function AddEmployee({ employees, setEmployees }) {
       setInputName("");
       setStatus("success");
       setShowAlert(true);
-      setAlertMessage("Employee added!");
-      setEmployees(employees.concat({name: inputName, address: inputAddress}));
+      setAlertMessage("Authorities added!");
+      setAuthorities(authorities.concat({name: inputName, address: inputAddress}));
     }
   };
 
@@ -68,13 +68,13 @@ export default function AddEmployee({ employees, setEmployees }) {
   return (
     <Box p="2">
       <FormControl isRequired isInvalid={isError}>
-        <FormLabel htmlFor="address">Employee Address</FormLabel>
+        <FormLabel htmlFor="address">Authorities Address</FormLabel>
         <Input
           id="address"
           value={inputAddress}
           onChange={handleInputAddressChange}
         />
-        <FormLabel htmlFor="name">Employee Name</FormLabel>
+        <FormLabel htmlFor="name">Authorities Name</FormLabel>
         <Input id="name" value={inputName} onChange={handleInputNameChange} />
         {!isError ? (
           <FormHelperText>
@@ -85,7 +85,7 @@ export default function AddEmployee({ employees, setEmployees }) {
         )}
       </FormControl>
       <Center>
-        <Button size="md" onClick={() => handleAddEmployee()}>
+        <Button size="md" onClick={() => handleAddAuthorities()}>
           Register
         </Button>
       </Center>

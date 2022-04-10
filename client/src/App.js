@@ -1,7 +1,4 @@
 import React, { Component, useState, useEffect } from "react";
-
-import Header from "./components/Header";
-import { Link } from "react-router-dom";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { MetaContext } from "./contexts/MetaContext";
 
@@ -11,7 +8,8 @@ import EmployeeView from "./components/EmployeeView";
 import EmployerView from "./components/EmployerView";
 import AuthoritiesView from "./components/AuthoritiesView";
 import HomePage from "./components/HomePage";
-import Footer from "./components/Footer";
+import Header from "./components/General/Header";
+import Footer from "./components/General/Footer";
 import { loadWeb3 } from "./services.js";
 
 export default function App() {
