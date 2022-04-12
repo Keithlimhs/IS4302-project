@@ -47,11 +47,20 @@ contract("ClearLeth", (accounts) => {
 
     // Test Case 2: Add/remove functions (Employee, Employer, Authority)
     it("Test Add and Remove functions", async () => {
-        await clearLethInstance.addEmployer(employer, { from: owner });
+        await clearLethInstance.addEmployer(
+            "Company 1",
+            "Employer-1",
+            employer,
+            {
+                from: owner,
+            }
+        );
         let employers = await clearLethInstance.getAllEmployers();
         assert.equal(employers[1], employer, "Employer not added successfully");
 
-        await clearLethInstance.addEmployee(employee, { from: employer });
+        await clearLethInstance.addEmployee("Employee-1", employee, {
+            from: employer,
+        });
         let employeesAdd = await clearLethInstance.getAllEmployees();
         assert.equal(
             employeesAdd[0],
@@ -67,7 +76,9 @@ contract("ClearLeth", (accounts) => {
             "Employee not removed successfuly"
         );
 
-        await clearLethInstance.addAuthority(authority, { from: owner });
+        await clearLethInstance.addAuthority("Authority-1", authority, {
+            from: owner,
+        });
         let authorityAdd = await clearLethInstance.getAllAuthorities();
         assert.equal(
             authorityAdd[0],
@@ -78,7 +89,9 @@ contract("ClearLeth", (accounts) => {
 
     // Test Case 2b: Modifers for add/remove functions
     it("Ensure only employers can add or remove employers/employees", async () => {
-        await clearLethInstance.addEmployee(employee, { from: employer });
+        await clearLethInstance.addEmployee("Employee-1", employee, {
+            from: employer,
+        });
         let employeesAdd = await clearLethInstance.getAllEmployees();
         assert.equal(
             employeesAdd[0],
@@ -87,23 +100,43 @@ contract("ClearLeth", (accounts) => {
         );
 
         await truffleAssert.reverts(
-            clearLethInstance.addEmployee(employee2, { from: employee }),
+            clearLethInstance.addEmployee("Employee-2", employee2, {
+                from: employee,
+            }),
             "Only an employer can call this function"
         );
 
         await truffleAssert.reverts(
-            clearLethInstance.addEmployer(employer2, { from: employee }),
+            clearLethInstance.addEmployer(
+                "Company 1",
+                "Employer-2",
+                employer2,
+                {
+                    from: employee,
+                }
+            ),
             "Only an employer can call this function"
         );
 
-        await clearLethInstance.addEmployer(employer2, { from: owner });
+        await clearLethInstance.addEmployer(
+            "Company 1",
+            "Employer-2",
+            employer2,
+            {
+                from: owner,
+            }
+        );
         await truffleAssert.reverts(
-            clearLethInstance.removeEmployee(employee, { from: employer2 }),
+            clearLethInstance.removeEmployee(employee, {
+                from: employer2,
+            }),
             "Only employer of this employee can call this function"
         );
 
         await truffleAssert.reverts(
-            clearLethInstance.addAuthority(authority2, { from: employer }),
+            clearLethInstance.addAuthority("Authority-2", authority2, {
+                from: employer,
+            }),
             "Only the contract owner can call this function"
         );
     });
@@ -115,9 +148,9 @@ contract("ClearLeth", (accounts) => {
         // let unixDate = new Date(today.unix() * 1000);
         // console.log(unixDate.toLocaleString());
 
-        let leaveApplication = await clearLethInstance.applyLeave(
-            today,
-            web3.utils.asciiToHex("test"),
+        let leaveApplication = await clearLethInstance.applyLeaves(
+            [today],
+            [web3.utils.asciiToHex("test reason")],
             { from: employee }
         );
         truffleAssert.eventEmitted(leaveApplication, "LeaveApplied");
@@ -133,15 +166,19 @@ contract("ClearLeth", (accounts) => {
     it("Ensure only employees can apply leave & cancel leaves", async () => {
         let today = moment().unix();
         await truffleAssert.reverts(
-            clearLethInstance.applyLeave(today, web3.utils.asciiToHex("test"), {
-                from: employer,
-            }),
+            clearLethInstance.applyLeaves(
+                [today],
+                [web3.utils.asciiToHex("test")],
+                {
+                    from: employer,
+                }
+            ),
             "Only employees can call this function"
         );
 
-        let leaveApplication = await clearLethInstance.applyLeave(
-            today,
-            web3.utils.asciiToHex("test"),
+        let leaveApplication = await clearLethInstance.applyLeaves(
+            [today],
+            [web3.utils.asciiToHex("test")],
             { from: employee }
         );
         truffleAssert.eventEmitted(leaveApplication, "LeaveApplied");
@@ -164,9 +201,9 @@ contract("ClearLeth", (accounts) => {
         });
         truffleAssert.eventEmitted(leaveApproval, "LeaveApproved");
 
-        let leaveApplication2 = await clearLethInstance.applyLeave(
-            timestamp,
-            web3.utils.asciiToHex("test"),
+        let leaveApplication2 = await clearLethInstance.applyLeaves(
+            [timestamp],
+            [web3.utils.asciiToHex("test")],
             { from: employee }
         );
         truffleAssert.eventEmitted(leaveApplication2, "LeaveApplied");
@@ -181,9 +218,9 @@ contract("ClearLeth", (accounts) => {
     // Test Case 4b: Testing modifiers
     it("Ensure only employers of employee can approve or reject leave", async () => {
         let timestamp = moment("2022-05-05").unix();
-        let leaveApplication2 = await clearLethInstance.applyLeave(
-            timestamp,
-            web3.utils.asciiToHex("test"),
+        let leaveApplication2 = await clearLethInstance.applyLeaves(
+            [timestamp],
+            [web3.utils.asciiToHex("test")],
             { from: employee }
         );
         truffleAssert.eventEmitted(leaveApplication2, "LeaveApplied");
