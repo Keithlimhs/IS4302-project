@@ -190,7 +190,7 @@ contract ClearLeth {
         string memory company = addressToUser[msg.sender].company;
         user memory newUser = user(
             _employeeName,
-            msg.sender,
+            _employeeAddress,
             company,
             role.employee
         );
@@ -211,7 +211,7 @@ contract ClearLeth {
         // new user object
         user memory newUser = user(
             _authorityName,
-            msg.sender,
+            _authorityAddress,
             "",
             role.authority
         );

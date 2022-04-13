@@ -46,8 +46,8 @@ export default function ViewEmployees({employees}) {
           <Tbody>
             {employees != null &&
               employees.map((i) => (
-                <Tr key={i.address} >
-                  <Td>{i.address}</Td>
+                <Tr key={i.wallet} >
+                  <Td>{i.wallet}</Td>
                   <Td>{i.name}</Td>
                   <Td>10</Td>
                 </Tr>

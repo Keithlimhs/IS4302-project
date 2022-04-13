@@ -65,8 +65,9 @@ export default function ApplyLeaves({ leaves, setLeaves }) {
     for (let i=0; i<inputDates.length; i++) {
         let timestamp = moment(inputDates[i], "DD/MM/YYYY").unix();
         let hashed = web3.utils.asciiToHex(inputReasons[i]);
+        const padded = ethers.utils.hexZeroPad(hashed, 32);
         unixDates.push(timestamp);
-        hashReasons.push(hashed);
+        hashReasons.push(padded);
     }
 
     let response = await applyLeaves(unixDates, hashReasons);

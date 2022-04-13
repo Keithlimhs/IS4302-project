@@ -56,7 +56,7 @@ export default function AddEmployee({ employees, setEmployees }) {
       setStatus("success");
       setShowAlert(true);
       setAlertMessage("Employee added!");
-      setEmployees(employees.concat({name: inputName, address: inputAddress}));
+      setEmployees(employees.concat({name: inputName, wallet: inputAddress}));
     }
   };
 

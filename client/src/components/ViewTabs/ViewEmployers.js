@@ -48,8 +48,8 @@ export default function ViewEmployers({ employers }) {
           <Tbody>
             {employers != null &&
               employers.map((i) => (
-                <Tr key={i.address}>
-                  <Td>{i.address}</Td>
+                <Tr key={i.wallet}>
+                  <Td>{i.wallet}</Td>
                   <Td>{i.name}</Td>
                 </Tr>
               ))}

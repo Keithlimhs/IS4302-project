@@ -20,6 +20,17 @@ export default function App() {
     if (userAddress == null) {
       loadWeb3(setUserAddress);
     }
+
+    window.ethereum.on("accountsChanged", function (accounts) {
+      // Time to reload your interface with accounts[0]!
+      setUserAddress(accounts[0]);
+      window.location.reload();
+    });
+    
+    // detect Network account change
+    window.ethereum.on("networkChanged", function (networkId) {
+      window.location.reload();
+    });
   }, []);
 
   return (
