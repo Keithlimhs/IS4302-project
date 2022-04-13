@@ -49,6 +49,7 @@ contract("ClearLeth", (accounts) => {
             "Company 1",
             "Employer-1",
             employer,
+            2,
             {
                 from: owner,
             }
@@ -109,6 +110,7 @@ contract("ClearLeth", (accounts) => {
                 "Company 1",
                 "Employer-2",
                 employer2,
+                2,
                 {
                     from: employee,
                 }
@@ -120,6 +122,7 @@ contract("ClearLeth", (accounts) => {
             "Company 1",
             "Employer-2",
             employer2,
+            2,
             {
                 from: owner,
             }
@@ -174,16 +177,16 @@ contract("ClearLeth", (accounts) => {
             "Only employees can call this function"
         );
 
-        let leaveApplication = await clearLethInstance.applyLeaves(
+        let leaveApplication1 = await clearLethInstance.applyLeaves(
             [today],
             [web3.utils.asciiToHex("test")],
             { from: employee }
         );
-        truffleAssert.eventEmitted(leaveApplication, "LeaveApplied");
+        truffleAssert.eventEmitted(leaveApplication1, "LeaveApplied");
 
-        let leave = await clearLethInstance.getLeaveInformation(1);
+        let leave1 = await clearLethInstance.getLeaveInformation(1);
         await truffleAssert.reverts(
-            clearLethInstance.cancelLeave(leave, {
+            clearLethInstance.cancelLeave(leave1, {
                 from: employer,
             }),
             "Only employee of this leave can call this function"
@@ -216,12 +219,12 @@ contract("ClearLeth", (accounts) => {
     // Test Case 4b: Testing modifiers
     it("Ensure only employers of employee can approve or reject leave", async () => {
         let timestamp = moment("2022-05-05").unix();
-        let leaveApplication2 = await clearLethInstance.applyLeaves(
+        let leaveApplication3 = await clearLethInstance.applyLeaves(
             [timestamp],
             [web3.utils.asciiToHex("test")],
             { from: employee }
         );
-        truffleAssert.eventEmitted(leaveApplication2, "LeaveApplied");
+        truffleAssert.eventEmitted(leaveApplication3, "LeaveApplied");
 
         let leave3 = await clearLethInstance.getLeaveInformation(3);
         await truffleAssert.reverts(
@@ -237,5 +240,46 @@ contract("ClearLeth", (accounts) => {
             }),
             "Only employer of this employee can call this function"
         );
+    });
+
+    it("Ensure that number of leaves approved cannot exceed Leave Limit", async () => {
+        let timestamp = moment("2022-05-05").unix();
+
+        // Approve Leave3
+        let leave3 = await clearLethInstance.getLeaveInformation(3);
+        let leaveApproval3 = await clearLethInstance.approveLeave(leave3, {
+            from: employer,
+        });
+        truffleAssert.eventEmitted(leaveApproval3, "LeaveApproved");
+
+        // Approve Leave4 should revert because leaveLimit only 2 (leave1, leave3)
+        let leaveApplication4 = await clearLethInstance.applyLeaves(
+            [timestamp],
+            [web3.utils.asciiToHex("test")],
+            { from: employee }
+        );
+        truffleAssert.eventEmitted(leaveApplication4, "LeaveApplied");
+
+        let leave4 = await clearLethInstance.getLeaveInformation(4);
+        await truffleAssert.reverts(
+            clearLethInstance.approveLeave(leave4, {
+                from: employer,
+            }),
+            "Leave Limit for employer will be exceeded if this leave is approved"
+        );
+    });
+
+    it("Test setting Leave Limit", async () => {
+        let leaveLimitSet = await clearLethInstance.setLeaveLimit(3, {
+            from: employer,
+        });
+        truffleAssert.eventEmitted(leaveLimitSet, "LeaveLimitSet");
+
+        let leave4 = await clearLethInstance.getLeaveInformation(4);
+
+        let leaveApproval4 = await clearLethInstance.approveLeave(leave4, {
+            from: employer,
+        });
+        truffleAssert.eventEmitted(leaveApproval4, "LeaveApproved");
     });
 });

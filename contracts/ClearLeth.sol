@@ -2,6 +2,7 @@
 pragma solidity >=0.4.22 <0.9.0;
 
 contract ClearLeth {
+    ///////////////////// USERS ATTRIBUTES /////////////////////
     address public contractOwner;
 
     address[] employers;
@@ -23,13 +24,6 @@ contract ClearLeth {
         authority
     }
 
-    enum leaveStatus {
-        pending,
-        cancelled,
-        approved,
-        rejected
-    }
-
     struct user {
         string name;
         address wallet;
@@ -37,12 +31,20 @@ contract ClearLeth {
         role role;
     }
 
+    ///////////////////// LEAVE ATTRIBUTES /////////////////////
     struct leave {
         uint256 id;
-        uint256 date; // UNIX
+        uint256 date; // unix timestamp
         bytes32 reason;
         leaveStatus status;
         address employee;
+    }
+
+    enum leaveStatus {
+        pending,
+        cancelled,
+        approved,
+        rejected
     }
 
     uint256 public leaveAmount;
@@ -52,16 +54,18 @@ contract ClearLeth {
     mapping(address => leave[]) employeeToLeaves;
     mapping(address => uint256) employeeLeaveBalance;
     mapping(uint256 => uint256) datesToEmployeesApplied;
-    mapping(address => uint256) employersToLeaveLimit;
+    mapping(address => uint256) employerToLeaveLimit;
+    mapping(address => uint256) employerToLeaveNum;
 
+    ///////////////////// LEAVE EVENTS /////////////////////
     event LeaveApplied(address employee);
     event LeaveApproved(address employee, address employer, uint256 leaveId);
     event LeaveCancelled(address employee, uint256 leaveId);
     event LeaveRejected(address employee, address employer, uint256 leaveId);
     event LeaveLimitSet(address employer, uint256 limit);
 
-    // @dev Owner of contract will be able to add employers and is an employer
-    // @dev leaveAmount is also set when deployed
+    // Owner of contract will be able to add employers and is an employer
+    // leaveAmount is also set when deployed
     constructor(uint256 _leaveAmount) {
         contractOwner = msg.sender;
         employers.push(msg.sender);
@@ -74,14 +78,7 @@ contract ClearLeth {
         leaveAmount = _leaveAmount;
     }
 
-    modifier employerOnly(address employeeAddress) {
-        require(
-            employeeToEmployer[employeeAddress] == msg.sender,
-            "Only employer of this employee can call this function"
-        );
-        _;
-    }
-
+    ///////////////////// MODIFIERS /////////////////////
     modifier isOwner() {
         require(
             contractOwner == msg.sender,
@@ -114,6 +111,23 @@ contract ClearLeth {
         _;
     }
 
+    modifier employerOnly(address employeeAddress) {
+        require(
+            employeeToEmployer[employeeAddress] == msg.sender,
+            "Only employer of this employee can call this function"
+        );
+        _;
+    }
+
+    // Check if user has been added
+    modifier notAdded(address _employerAddress) {
+        require(
+            addressToUser[_employerAddress].wallet == address(0),
+            "User has already been added!"
+        );
+        _;
+    }
+
     modifier validLeaveId(uint256 leaveId) {
         require(leaveId < numLeaves, "Not Valid Leave Id");
         _;
@@ -135,31 +149,20 @@ contract ClearLeth {
         _;
     }
 
-    // CHECK IF USER HAS ALREADY BEEN ADDED
-    modifier notAdded(address _employerAddress) {
+    modifier leaveLimitNotExceeded() {
         require(
-            addressToUser[_employerAddress].wallet == address(0),
-            "User has already been added!"
+            employerToLeaveNum[msg.sender] < employerToLeaveLimit[msg.sender],
+            "Leave Limit for employer will be exceeded if this leave is approved"
         );
         _;
     }
 
-    function getUser() public view returns (user memory) {
-        return addressToUser[msg.sender];
-    }
-
-    function getUserNameOf(address _userAddress)
-        public
-        view
-        returns (string memory)
-    {
-        return addressToUser[_userAddress].name;
-    }
-
+    ///////////////////// USER FUNCTIONS /////////////////////
     function addEmployer(
         string memory _company,
         string memory _employerName,
-        address _employerAddress
+        address _employerAddress,
+        uint256 _leaveLimit
     ) public isEmployer notAdded(_employerAddress) {
         employers.push(_employerAddress);
 
@@ -172,6 +175,7 @@ contract ClearLeth {
         );
 
         addressToUser[_employerAddress] = newUser;
+        employerToLeaveLimit[_employerAddress] = _leaveLimit;
         numOfEmployers++;
     }
 
@@ -216,8 +220,6 @@ contract ClearLeth {
         numOfAuthorities++;
     }
 
-    // @dev would be better if we just update mapping employees to false
-    // then when we do getEmployees if wont appear
     function removeEmployee(address _employeeAddress)
         public
         employerOnly(_employeeAddress)
@@ -245,43 +247,7 @@ contract ClearLeth {
         numOfEmployees--;
     }
 
-    function getEmployeesByEmployer(address _employerAddress)
-        public
-        view
-        returns (address[] memory)
-    {
-        return employerToEmployee[_employerAddress];
-    }
-
-    // @dev transfer complexity to view function no gas
-    function getAllEmployees() public view returns (address[] memory) {
-        address[] memory employeeArray = new address[](numOfEmployees);
-        for (uint256 i = 0; i < numOfEmployees; i++) {
-            employeeArray[i] = employees[i];
-        }
-
-        return employeeArray;
-    }
-
-    // @dev transfer complexity to view function no gas
-    function getAllEmployers() public view returns (address[] memory) {
-        address[] memory employerArray = new address[](numOfEmployers);
-        for (uint256 i = 0; i < numOfEmployers; i++) {
-            employerArray[i] = employers[i];
-        }
-
-        return employerArray;
-    }
-
-    // @dev transfer complexity to view function no gas
-    function getAllAuthorities() public view returns (address[] memory) {
-        address[] memory authoritiesArray = new address[](numOfAuthorities);
-        for (uint256 i = 0; i < numOfAuthorities; i++) {
-            authoritiesArray[i] = authorities[i];
-        }
-        return authoritiesArray;
-    }
-
+    ///////////////////// LEAVE FUNCTIONS /////////////////////
     function applyLeaves(uint256[] memory dates, bytes32[] memory reason)
         public
         isEmployee
@@ -321,6 +287,7 @@ contract ClearLeth {
         validLeaveId(leaveToApprove.id)
         validLeaveStatus(leaveToApprove)
         employerOnly(leaveToApprove.employee)
+        leaveLimitNotExceeded
     {
         address employeeAddress = leaveToApprove.employee;
         for (uint256 i = 0; i < employeeToLeaves[employeeAddress].length; i++) {
@@ -338,6 +305,7 @@ contract ClearLeth {
 
         datesToEmployeesApplied[leaveToApprove.date]++;
         employeeLeaveBalance[employeeAddress]--;
+        employerToLeaveNum[msg.sender] += 1;
         emit LeaveApproved(employeeAddress, msg.sender, leaveToApprove.id);
     }
 
@@ -363,6 +331,59 @@ contract ClearLeth {
         emit LeaveRejected(employeeAddress, msg.sender, leaveToReject.id);
     }
 
+    function setLeaveLimit(uint256 _limit) public isEmployer {
+        employerToLeaveLimit[msg.sender] = _limit;
+        emit LeaveLimitSet(msg.sender, _limit);
+    }
+
+    ///////////////////// USER GETTERS /////////////////////
+    function getUser() public view returns (user memory) {
+        return addressToUser[msg.sender];
+    }
+
+    function getUserNameOf(address _userAddress)
+        public
+        view
+        returns (string memory)
+    {
+        return addressToUser[_userAddress].name;
+    }
+
+    function getAllEmployees() public view returns (address[] memory) {
+        address[] memory employeeArray = new address[](numOfEmployees);
+        for (uint256 i = 0; i < numOfEmployees; i++) {
+            employeeArray[i] = employees[i];
+        }
+
+        return employeeArray;
+    }
+
+    function getAllEmployers() public view returns (address[] memory) {
+        address[] memory employerArray = new address[](numOfEmployers);
+        for (uint256 i = 0; i < numOfEmployers; i++) {
+            employerArray[i] = employers[i];
+        }
+
+        return employerArray;
+    }
+
+    function getAllAuthorities() public view returns (address[] memory) {
+        address[] memory authoritiesArray = new address[](numOfAuthorities);
+        for (uint256 i = 0; i < numOfAuthorities; i++) {
+            authoritiesArray[i] = authorities[i];
+        }
+        return authoritiesArray;
+    }
+
+    function getEmployeesByEmployer(address _employerAddress)
+        public
+        view
+        returns (address[] memory)
+    {
+        return employerToEmployee[_employerAddress];
+    }
+
+    ///////////////////// LEAVE GETTERS /////////////////////
     function getLeaveBalance() public view returns (uint256) {
         return employeeLeaveBalance[msg.sender];
     }
@@ -386,9 +407,5 @@ contract ClearLeth {
         returns (leave[] memory)
     {
         return employeeToLeaves[employeeAddress];
-    }
-
-    function setLeaveLimit(address employerAddress, uint256 limit) public {
-        emit LeaveLimitSet(employerAddress, limit);
     }
 }
