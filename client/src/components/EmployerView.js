@@ -22,18 +22,27 @@ import {
   getOwnerAddress,
   getAllEmployees,
   getAllEmployers,
+  getCompanyLeaves,
 } from "../services";
+import ViewLeaves from "./ViewTabs/ViewLeaves";
 
 export default function EmployerView() {
   const { userAddress } = React.useContext(MetaContext);
   const [employees, setEmployees] = useState([]);
   const [employers, setEmployers] = useState([]);
+  const [leaves, setLeaves] = useState([]);
   const [myInfo, setMyInfo] = useState(null);
   const [accessRight, setAccessRight] = useState(false);
 
   useEffect(() => {
     initView();
   }, []);
+
+  useEffect(() => {
+    if (myInfo !== null) {
+      initLeaves();
+    } 
+  }, [myInfo]);
 
   const initEmployees = async () => {
     getAllEmployees().then((e) => {
@@ -47,20 +56,29 @@ export default function EmployerView() {
     });
   };
 
+  const initLeaves = async () => {
+    console.log(myInfo);
+    getCompanyLeaves(myInfo.wallet).then((e) => {
+      console.log(e);
+      setLeaves(e);
+    });
+  };
+
   const initView = async () => {
     let infoResult = await getMyInfo();
     if (infoResult == null) {
       return;
+    } else {
+      let ownerAddress = await getOwnerAddress();
+      // 1 FOR EMPLOYEE
+      if (infoResult.role == 1 || infoResult.wallet == ownerAddress) {
+        console.log("Accessed!");
+        setAccessRight(true);
+      }
+      setMyInfo(infoResult);
+      initEmployees();
+      initEmployers();
     }
-    let ownerAddress = await getOwnerAddress();
-    // 1 FOR EMPLOYEE
-    if (infoResult.role == 1 || infoResult.wallet == ownerAddress) {
-      console.log("Accessed!");
-      setAccessRight(true);
-    }
-    setMyInfo(infoResult);
-    initEmployees();
-    initEmployers();
   };
 
   return (
@@ -126,10 +144,10 @@ export default function EmployerView() {
                     <ViewEmployees employees={employees} />
                   </TabPanel>
                   <TabPanel>
-                    <p>four!</p>
+                    <ViewLeaves leaves={leaves} />
                   </TabPanel>
                   <TabPanel>
-                    <p>five!</p>
+                    <p>Coming soon!</p>
                   </TabPanel>
                 </TabPanels>
               </Tabs>

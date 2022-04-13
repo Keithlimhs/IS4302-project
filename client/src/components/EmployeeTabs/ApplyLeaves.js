@@ -95,7 +95,7 @@ export default function ApplyLeaves({ leaves, setLeaves }) {
 
   return (
     <Box p="2">
-      {inputDates.length != 0 &&
+      {inputDates.length !== 0 &&
         inputDates.map((d, index) => (
           <Box key={index}>
             <Text>Date: {inputDates[index]}</Text>

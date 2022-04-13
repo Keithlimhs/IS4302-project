@@ -28,6 +28,7 @@ export default function AddEmployer({ employers, setEmployers }) {
   const [inputCompany, setInputCompany] = useState("");
   const [inputAddress, setInputAddress] = useState("");
   const [inputName, setInputName] = useState("");
+  const [inputLimit, setInputLimit] = useState(0);
   const [status, setStatus] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
@@ -46,7 +47,7 @@ export default function AddEmployer({ employers, setEmployers }) {
       return;
     }
 
-    let response = await addEmployer(inputCompany, inputName, inputAddress);
+    let response = await addEmployer(inputCompany, inputName, inputAddress, inputLimit);
 
     if (response == null) {
       handleRejection();
@@ -54,18 +55,20 @@ export default function AddEmployer({ employers, setEmployers }) {
       setInputCompany("");
       setInputAddress("");
       setInputName("");
+      setInputLimit("");
       setStatus("success");
       setShowAlert(true);
       setAlertMessage("Employer added!");
-      setEmployers(employers.concat({company: inputCompany, name: inputName, address: inputAddress}));
+      setEmployers(employers.concat({company: inputCompany, name: inputName, address: inputAddress, limit: inputLimit}));
     }
   };
 
   const handleInputCompanyChange = (e) => setInputCompany(e.target.value);
   const handleInputAddressChange = (e) => setInputAddress(e.target.value);
   const handleInputNameChange = (e) => setInputName(e.target.value);
+  const handleInputLimitChange = (e) => setInputLimit(e.target.value);
 
-  const isError = inputCompany  === "" || inputAddress  === "" || inputName === "";
+  const isError = inputCompany  === "" || inputAddress  === "" || inputName === "" || inputLimit === "";
 
   return (
     <Box p="2">
@@ -76,13 +79,14 @@ export default function AddEmployer({ employers, setEmployers }) {
         <Input id="address" value={inputAddress} onChange={handleInputAddressChange} />
         <FormLabel htmlFor="name">Employer Name</FormLabel>
         <Input id="name" value={inputName} onChange={handleInputNameChange} />
-
+        <FormLabel htmlFor="limit">Leave Limit</FormLabel>
+        <Input id="limit" value={inputLimit} onChange={handleInputLimitChange} />
         {!isError ? (
           <FormHelperText>
             Choose carefully! It's on the blockchain!
           </FormHelperText>
         ) : (
-          <FormErrorMessage>Address is required.</FormErrorMessage>
+          <FormErrorMessage>Input is required.</FormErrorMessage>
         )}
       </FormControl>
       <Center>

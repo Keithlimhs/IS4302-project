@@ -30,14 +30,12 @@ import { getAllEmployers } from "../../services";
 
 export default function ViewEmployers({ employers }) {
   const { userAddress } = React.useContext(MetaContext);
-  
-  useEffect(() => {
-  }, []);
+
+  useEffect(() => {}, []);
 
   return (
     <Box p="2">
       <TableContainer>
-        <Heading>Company: </Heading>
         <Table variant="simple">
           <Thead>
             <Tr>
