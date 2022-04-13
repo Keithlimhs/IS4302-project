@@ -37,12 +37,10 @@ contract("ClearLeth", (accounts) => {
     // Test Case 1.1: Test address to user information
     it("Test User Information", async () => {
         let ownerAddress = await clearLethInstance.contractOwner();
-        let name = await clearLethInstance.getUserName();
-        let wallet = await clearLethInstance.getUserWallet();
-        let company = await clearLethInstance.getUserCompany();
-        assert.equal(name, "Owner", "Name info stored correctly");
-        assert.equal(wallet, ownerAddress, "Wallet info stored correctly");
-        assert.equal(company, "NUS", "Company info stored correctly");
+        let user = await clearLethInstance.getUser();
+        assert.equal(user.name, "Owner", "Name info stored correctly");
+        assert.equal(user.wallet, ownerAddress, "Wallet info stored correctly");
+        assert.equal(user.company, "NUS", "Company info stored correctly");
     });
 
     // Test Case 2: Add/remove functions (Employee, Employer, Authority)

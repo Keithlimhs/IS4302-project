@@ -46,19 +46,8 @@ export const getOwnerAddress = async () => {
 export const getMyInfo = async () => {
   try {
     let contractInstance = await getContract();
-    const name = await contractInstance.getUserName();
-    const company = await contractInstance.getUserCompany();
-    const wallet = await contractInstance.getUserWallet();
-    let role = await contractInstance.getUserRole();
-    if (role == 0) {
-      role = "Employee";
-    } else if (role == 1) {
-      role = "Employer";
-    } else {
-      role = "Authority";
-    }
-    let response = {name, company, wallet, role};
-    return response;
+    const response = await contractInstance.getUser();
+   return response;
   } catch (error) {
     console.error(error);
   }
@@ -174,3 +163,4 @@ export const applyLeaves = async (dates, reasons) => {
     console.error(error);
   }
 };
+

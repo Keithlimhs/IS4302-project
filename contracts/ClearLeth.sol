@@ -82,14 +82,6 @@ contract ClearLeth {
         _;
     }
 
-    // modifier notSelf(address toAdd) {
-    //     require(
-    //         toAdd != msg.sender,
-    //         "You cannot add yourself!"
-    //     );
-    //     _;
-    //}
-
     modifier isOwner() {
         require(
             contractOwner == msg.sender,
@@ -152,8 +144,8 @@ contract ClearLeth {
         _;
     }
 
-    function getUserName() public view returns (string memory) {
-        return addressToUser[msg.sender].name;
+    function getUser() public view returns (user memory) {
+        return addressToUser[msg.sender];
     }
 
     function getUserNameOf(address _userAddress)
@@ -162,18 +154,6 @@ contract ClearLeth {
         returns (string memory)
     {
         return addressToUser[_userAddress].name;
-    }
-
-    function getUserCompany() public view returns (string memory) {
-        return addressToUser[msg.sender].company;
-    }
-
-    function getUserWallet() public view returns (address) {
-        return addressToUser[msg.sender].wallet;
-    }
-
-    function getUserRole() public view returns (role) {
-        return addressToUser[msg.sender].role;
     }
 
     function addEmployer(
