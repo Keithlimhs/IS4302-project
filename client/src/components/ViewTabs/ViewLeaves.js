@@ -35,13 +35,13 @@ export default function ViewLeaves({ leaves }) {
   const { userAddress } = React.useContext(MetaContext);
 
   const handleApprove = async (leaveId) => {
-    approveLeave(leaveId, userAddress).then((e) => {
-/*       window.location.reload();
- */    });
+    approveLeave(leaveId, userAddress).then(() => {
+      window.location.reload();
+    });
   };
 
   const handleReject = async (leaveId) => {
-    rejectLeave(leaveId).then((e) => {
+    rejectLeave(leaveId).then(() => {
       window.location.reload();
     });
   };

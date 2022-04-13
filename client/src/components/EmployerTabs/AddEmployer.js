@@ -28,7 +28,7 @@ export default function AddEmployer({ employers, setEmployers }) {
   const [inputCompany, setInputCompany] = useState("");
   const [inputAddress, setInputAddress] = useState("");
   const [inputName, setInputName] = useState("");
-  const [inputLimit, setInputLimit] = useState(0);
+  const [inputLimit, setInputLimit] = useState("");
   const [status, setStatus] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
@@ -59,7 +59,7 @@ export default function AddEmployer({ employers, setEmployers }) {
       setStatus("success");
       setShowAlert(true);
       setAlertMessage("Employer added!");
-      setEmployers(employers.concat({company: inputCompany, name: inputName, address: inputAddress, limit: inputLimit}));
+      setEmployers(employers.concat({company: inputCompany, name: inputName, wallet: inputAddress, limit: inputLimit}));
     }
   };
 

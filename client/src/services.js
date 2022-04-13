@@ -172,9 +172,6 @@ export const applyLeaves = async (dates, reasons) => {
 export const approveLeave = async (leaveId, address) => {
   try {
     let contractInstance = await getContract();
-    let num = await contractInstance.employerToLeaveNum(address);
-    console.log(num);
-
     let leave = await contractInstance.getLeaveInformation(leaveId);
     console.log(leave);
     const response = await contractInstance.approveLeave(leave);

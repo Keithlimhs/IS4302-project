@@ -81,6 +81,8 @@ export default function ApplyLeaves({ leaves, setLeaves }) {
       setShowAlert(true);
       setAlertMessage("Leaves added!");
       for (let i = 0; i < inputDates.length; i++) {
+        let hashed = web3.utils.asciiToHex(inputReasons[i]);
+        const padded = ethers.utils.hexZeroPad(hashed, 32);
         setLeaves(
           leaves.concat({ name: inputDates[i], address: inputReasons[i] })
         );

@@ -48,8 +48,8 @@ export default function ViewAuthorities({authorities}) {
           <Tbody>
             {authorities != null &&
               authorities.map((i) => (
-                <Tr key={i.address} >
-                  <Td>{i.address}</Td>
+                <Tr key={i.wallet} >
+                  <Td>{i.wallet}</Td>
                   <Td>{i.name}</Td>
                 </Tr>
               ))}
