@@ -19,12 +19,14 @@ import {
 } from "@chakra-ui/react";
 
 import MyInfo from "./MyInfo";
-import { getMyInfo, getOwnerAddress } from "../services";
+import { getLeaveApplications, getMyInfo, getOwnerAddress } from "../services";
+import ApplyLeaves from "./EmployeeTabs/ApplyLeaves";
 
 export default function EmployeeView() {
   const { userAddress } = React.useContext(MetaContext);
   const [myInfo, setMyInfo] = useState(null);
   const [accessRight, setAccessRight] = useState(false);
+  const [leaves, setLeaves] = useState([]);
 
   useEffect(() => {
     initView();
@@ -41,8 +43,14 @@ export default function EmployeeView() {
       setAccessRight(true);
     }
     setMyInfo(infoResult);
+    initLeaves(infoResult.wallet);
   };
-  
+
+  const initLeaves = async (address) => {
+    getLeaveApplications(address).then((e) => {
+      setLeaves(e);
+    });
+  };
 
   return (
     <>
@@ -85,7 +93,7 @@ export default function EmployeeView() {
 
                 <TabPanels>
                   <TabPanel>
-                    <p>two!</p>
+                    <ApplyLeaves setLeaves={setLeaves} leaves={leaves} />
                   </TabPanel>
                   <TabPanel>
                     <p>three!</p>

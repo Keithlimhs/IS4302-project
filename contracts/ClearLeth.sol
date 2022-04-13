@@ -367,7 +367,6 @@ contract ClearLeth {
         return employeeLeaveBalance[msg.sender];
     }
 
-    // this method i think cannot return a struct? - ryan
     function getLeaveInformation(uint256 leaveId)
         public
         view

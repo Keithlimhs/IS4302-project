@@ -2,6 +2,7 @@ import ClearLethContract from "./contracts/ClearLeth.json";
 import getWeb3 from "./getWeb3";
 import { ethers } from "ethers";
 
+// LOAD WEB3, SET USER ON INIT
 export const loadWeb3 = async (setUserAddress) => {
   try {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -19,6 +20,7 @@ export const loadWeb3 = async (setUserAddress) => {
   }
 };
 
+// GET CONTRACT INSTANCE
 export const getContract = async () => {
   // Get the contract instance.
   let provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -33,6 +35,9 @@ export const getContract = async () => {
   return contractInstance;
 };
 
+
+/* ------------------- OPERATIONS -------------------*/
+
 export const getOwnerAddress = async () => {
   try {
     let contractInstance = await getContract();
@@ -41,13 +46,13 @@ export const getOwnerAddress = async () => {
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 export const getMyInfo = async () => {
   try {
     let contractInstance = await getContract();
     const response = await contractInstance.getUser();
-   return response;
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -63,6 +68,9 @@ export const getNameOfAddress = async (address) => {
   }
 };
 
+/* ------------------- ROLES MANAGEMENT -------------------*/
+
+// GET ALL EMPLOYEES
 export const getAllEmployees = async () => {
   try {
     let result = [];
@@ -71,7 +79,7 @@ export const getAllEmployees = async () => {
     for (let i = 0; i < employees.length; i++) {
       let address = employees[i];
       let name = await contractInstance.getUserNameOf(address);
-      result.push({name, address});
+      result.push({ name, address });
     }
     return result;
   } catch (error) {
@@ -79,6 +87,7 @@ export const getAllEmployees = async () => {
   }
 };
 
+// GET ALL EMPLOYERS
 export const getAllEmployers = async () => {
   try {
     let result = [];
@@ -87,7 +96,7 @@ export const getAllEmployers = async () => {
     for (let i = 0; i < employers.length; i++) {
       let address = employers[i];
       let name = await contractInstance.getUserNameOf(address);
-      result.push({name, address});
+      result.push({ name, address });
     }
     return result;
   } catch (error) {
@@ -95,6 +104,7 @@ export const getAllEmployers = async () => {
   }
 };
 
+// GET ALL AUTHORITIES
 export const getAllAuthorities = async () => {
   try {
     let result = [];
@@ -103,7 +113,7 @@ export const getAllAuthorities = async () => {
     for (let i = 0; i < authorities.length; i++) {
       let address = authorities[i];
       let name = await contractInstance.getUserNameOf(address);
-      result.push({name, address});
+      result.push({ name, address });
     }
     return result;
   } catch (error) {
@@ -111,16 +121,7 @@ export const getAllAuthorities = async () => {
   }
 };
 
-export const getEmployeeLeaveBalance = async (address) => {
-  try {
-    let contractInstance = await getContract();
-    const response = await contractInstance.employeeLeaveBalance(address);
-    return response;
-  } catch (error) {
-    console.error(error);
-  }
-};
-
+// ADD A EMPLOYEE
 export const addEmployee = async (name, address) => {
   try {
     let contractInstance = await getContract();
@@ -132,6 +133,7 @@ export const addEmployee = async (name, address) => {
   }
 };
 
+// ADD A EMPLOYER
 export const addEmployer = async (company, name, address) => {
   try {
     let contractInstance = await getContract();
@@ -142,6 +144,7 @@ export const addEmployer = async (company, name, address) => {
   }
 };
 
+// ADD A AUTHORITY
 export const addAuthority = async (name, address) => {
   try {
     let contractInstance = await getContract();
@@ -152,10 +155,13 @@ export const addAuthority = async (name, address) => {
   }
 };
 
+/* ------------------- LEAVES MANAGEMENT -------------------*/
 
 // TAKES IN ARRAY OF DATES AND REASONS
 export const applyLeaves = async (dates, reasons) => {
   try {
+    console.log(dates);
+    console.log(reasons);
     let contractInstance = await getContract();
     const response = await contractInstance.applyLeaves(dates, reasons);
     return response;
@@ -164,3 +170,57 @@ export const applyLeaves = async (dates, reasons) => {
   }
 };
 
+// INPUT LEAVE OBJECT EMIT EVENT
+export const approveLeave = async (leave) => {
+  try {
+    let contractInstance = await getContract();
+    const response = await contractInstance.approveLeave(leave);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// INPUT LEAVE OBJECT EMIT EVENT
+export const rejectLeave = async (leave) => {
+  try {
+    let contractInstance = await getContract();
+    const response = await contractInstance.rejectLeave(leave);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// RETURN LEAVE INFO
+export const getLeaveInformation = async (leaveId) => {
+  try {
+    let contractInstance = await getContract();
+    const response = await contractInstance.getLeaveInformation(leaveId);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// RETURN ARR OF EMPLOYEE'S LEAVE OBJECTS
+export const getLeaveApplications = async (address) => {
+  try {
+    let contractInstance = await getContract();
+    const response = await contractInstance.getLeaveApplications(address);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// RETURN EMPLOYEE'S LEAVE BALANCE
+export const getLeaveBalance = async () => {
+  try {
+    let contractInstance = await getContract();
+    const response = await contractInstance.getLeaveBalance();
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
