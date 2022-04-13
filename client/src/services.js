@@ -77,10 +77,11 @@ export const getAllEmployees = async () => {
     let contractInstance = await getContract();
     const employees = await contractInstance.getAllEmployees();
     for (let i = 0; i < employees.length; i++) {
-      let address = employees[i];
-      let name = await contractInstance.getUserNameOf(address);
-      result.push({ name, address });
+      let wallet = employees[i];
+      let name = await contractInstance.getUserNameOf(wallet);
+      result.push({ name, wallet });
     }
+
     return result;
   } catch (error) {
     console.error(error);
@@ -94,9 +95,9 @@ export const getAllEmployers = async () => {
     let contractInstance = await getContract();
     let employers = await contractInstance.getAllEmployers();
     for (let i = 0; i < employers.length; i++) {
-      let address = employers[i];
-      let name = await contractInstance.getUserNameOf(address);
-      result.push({ name, address });
+      let wallet = employers[i];
+      let name = await contractInstance.getUserNameOf(wallet);
+      result.push({ name, wallet });
     }
     return result;
   } catch (error) {
@@ -111,9 +112,9 @@ export const getAllAuthorities = async () => {
     let contractInstance = await getContract();
     const authorities = await contractInstance.getAllAuthorities();
     for (let i = 0; i < authorities.length; i++) {
-      let address = authorities[i];
-      let name = await contractInstance.getUserNameOf(address);
-      result.push({ name, address });
+      let wallet = authorities[i];
+      let name = await contractInstance.getUserNameOf(wallet);
+      result.push({ name, wallet });
     }
     return result;
   } catch (error) {
@@ -160,8 +161,6 @@ export const addAuthority = async (name, address) => {
 // TAKES IN ARRAY OF DATES AND REASONS
 export const applyLeaves = async (dates, reasons) => {
   try {
-    console.log(dates);
-    console.log(reasons);
     let contractInstance = await getContract();
     const response = await contractInstance.applyLeaves(dates, reasons);
     return response;
@@ -208,6 +207,7 @@ export const getLeaveApplications = async (address) => {
   try {
     let contractInstance = await getContract();
     const response = await contractInstance.getLeaveApplications(address);
+    console.log(response);
     return response;
   } catch (error) {
     console.error(error);

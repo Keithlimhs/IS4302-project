@@ -53,7 +53,8 @@ export default function EmployerView() {
       return;
     }
     let ownerAddress = await getOwnerAddress();
-    if (infoResult.role == "Employer" || infoResult.wallet == ownerAddress) {
+    // 1 FOR EMPLOYEE
+    if (infoResult.role == 1 || infoResult.wallet == ownerAddress) {
       console.log("Accessed!");
       setAccessRight(true);
     }
@@ -119,10 +120,7 @@ export default function EmployerView() {
                     />
                   </TabPanel>
                   <TabPanel>
-                    <ViewEmployers
-                      setEmployers={setEmployers}
-                      employers={employers}
-                    />
+                    <ViewEmployers employers={employers} />
                   </TabPanel>
                   <TabPanel>
                     <ViewEmployees employees={employees} />

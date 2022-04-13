@@ -21,6 +21,7 @@ import {
 import MyInfo from "./MyInfo";
 import { getLeaveApplications, getMyInfo, getOwnerAddress } from "../services";
 import ApplyLeaves from "./EmployeeTabs/ApplyLeaves";
+import ViewLeaves from "./ViewTabs/ViewLeaves";
 
 export default function EmployeeView() {
   const { userAddress } = React.useContext(MetaContext);
@@ -38,7 +39,8 @@ export default function EmployeeView() {
       return;
     }
     let ownerAddress = await getOwnerAddress();
-    if (infoResult.role == "Employee" || infoResult.wallet == ownerAddress) {
+    // O FOR EMPLOYEE
+    if (infoResult.role == 0 || infoResult.wallet == ownerAddress) {
       console.log("Accessed!");
       setAccessRight(true);
     }
@@ -96,7 +98,7 @@ export default function EmployeeView() {
                     <ApplyLeaves setLeaves={setLeaves} leaves={leaves} />
                   </TabPanel>
                   <TabPanel>
-                    <p>three!</p>
+                    <ViewLeaves leaves={leaves} />
                   </TabPanel>
                 </TabPanels>
               </Tabs>

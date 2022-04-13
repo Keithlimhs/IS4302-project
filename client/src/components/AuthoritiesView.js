@@ -60,7 +60,8 @@ export default function AuthoritiesView() {
     }
     let ownerAddress = await getOwnerAddress();
 
-    if (infoResult.role == "Authority" || infoResult.wallet == ownerAddress) {
+    // 2 FOR AUTHORITIES
+    if (infoResult.role == 2 || infoResult.wallet == ownerAddress) {
       console.log("Accessed!");
       setAccessRight(true);
     }
