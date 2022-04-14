@@ -98,7 +98,11 @@ export default function EmployeeView() {
                     <ApplyLeaves setLeaves={setLeaves} leaves={leaves} />
                   </TabPanel>
                   <TabPanel>
-                    <ViewLeaves leaves={leaves} />
+                    <Center>
+                      Note: Approve / Reject / Cancel Operations may take a few
+                      minutes to load on the blockchain, refresh in awhile!{" "}
+                    </Center>
+                    <ViewLeaves leaves={leaves} myInfo={myInfo} />
                   </TabPanel>
                 </TabPanels>
               </Tabs>

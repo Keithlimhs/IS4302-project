@@ -279,6 +279,17 @@ contract ClearLeth {
                 employeeToLeaves[msg.sender][i].status = leaveStatus.cancelled;
             }
         }
+
+        for (uint256 j = 0; j < allLeaves.length; j++) {
+            if (allLeaves[j].id == _leave.id) {
+                allLeaves[j].status = leaveStatus.approved;
+            }
+        }
+
+        datesToEmployeesApplied[_leave.date]--;
+        employeeLeaveBalance[msg.sender]++;
+        employerToLeaveNum[msg.sender] -= 1;
+
         emit LeaveCancelled(msg.sender, _leave.id);
     }
 
@@ -328,6 +339,11 @@ contract ClearLeth {
                 allLeaves[j].status = leaveStatus.rejected;
             }
         }
+
+        datesToEmployeesApplied[leaveToReject.date]--;
+        employeeLeaveBalance[msg.sender]++;
+        employerToLeaveNum[msg.sender] -= 1;
+
         emit LeaveRejected(employeeAddress, msg.sender, leaveToReject.id);
     }
 
@@ -407,5 +423,13 @@ contract ClearLeth {
         returns (leave[] memory)
     {
         return employeeToLeaves[employeeAddress];
+    }
+
+    function getAllLeaves() public view returns (leave[] memory) {
+        leave[] memory leavesArray = new leave[](numLeaves);
+        for (uint256 i = 0; i < numLeaves; i++) {
+            leavesArray[i] = allLeaves[i];
+        }
+        return leavesArray;
     }
 }

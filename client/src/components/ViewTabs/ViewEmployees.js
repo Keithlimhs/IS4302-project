@@ -40,8 +40,8 @@ export default function ViewEmployees({employees}) {
             <Tr>
               <Th>Address</Th>
               <Th>Name</Th>
-              <Th>Limit</Th>
-            </Tr>
+{/*               <Th>Limit</Th>
+ */}            </Tr>
           </Thead>
           <Tbody>
             {employees != null &&
@@ -49,8 +49,8 @@ export default function ViewEmployees({employees}) {
                 <Tr key={i.wallet} >
                   <Td>{i.wallet}</Td>
                   <Td>{i.name}</Td>
-                  <Td>10</Td>
-                </Tr>
+{/*                   <Td>10</Td>
+ */}                </Tr>
               ))}
           </Tbody>
         </Table>

@@ -57,9 +57,8 @@ export default function EmployerView() {
   };
 
   const initLeaves = async () => {
-    console.log(myInfo);
+    console.log("init leaves");
     getCompanyLeaves(myInfo.wallet).then((e) => {
-      console.log(e);
       setLeaves(e);
     });
   };
@@ -120,7 +119,7 @@ export default function EmployerView() {
                   <Tab>Add Employee</Tab>
                   <Tab>View Employers</Tab>
                   <Tab>View Employees</Tab>
-                  <Tab>View Leaves</Tab>
+                  <Tab>Company Leaves</Tab>
                   <Tab>Set Rules</Tab>
                 </TabList>
 
@@ -144,7 +143,8 @@ export default function EmployerView() {
                     <ViewEmployees employees={employees} />
                   </TabPanel>
                   <TabPanel>
-                    <ViewLeaves leaves={leaves} />
+                    <Center>Note: Approve / Reject / Cancel Operations may take a few minutes to load on the blockchain, refresh in awhile! </Center>
+                    <ViewLeaves leaves={leaves} myInfo={myInfo} />
                   </TabPanel>
                   <TabPanel>
                     <p>Coming soon!</p>

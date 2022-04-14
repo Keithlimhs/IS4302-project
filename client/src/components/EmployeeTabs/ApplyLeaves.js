@@ -84,9 +84,10 @@ export default function ApplyLeaves({ leaves, setLeaves }) {
         let hashed = web3.utils.asciiToHex(inputReasons[i]);
         const padded = ethers.utils.hexZeroPad(hashed, 32);
         setLeaves(
-          leaves.concat({ name: inputDates[i], address: inputReasons[i] })
+          leaves.concat({ date: inputDates[i], reason: padded, status: 0 })
         );
       }
+      window.location.reload();
     }
   };
 

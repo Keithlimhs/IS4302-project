@@ -194,6 +194,18 @@ export const rejectLeave = async (leaveId) => {
   }
 };
 
+// INPUT LEAVE OBJECT EMIT EVENT
+export const cancelLeave = async (leaveId) => {
+  try {
+    let contractInstance = await getContract();
+    let leave = await contractInstance.getLeaveInformation(leaveId);
+    const response = await contractInstance.cancelLeave(leave);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 // RETURN LEAVE INFO
 export const getLeaveInformation = async (leaveId) => {
   try {
@@ -257,9 +269,20 @@ export const getCompanyLeaves = async (address) => {
 // RETURN ALL LEAVES IN CONTRACT
 export const getAllLeaves = async () => {
   try {
+    let result = [];
     let contractInstance = await getContract();
-    const response = await contractInstance.allLeaves();
-    return response;
+    const leaves = await contractInstance.getAllLeaves();
+
+    for (let i = 0; i < leaves.length; i++) {
+      let id = leaves[i].id;
+      let status = leaves[i].status;
+      let date = leaves[i].date;
+      let reason = leaves[i].reason;
+      let employee = leaves[i].employee;
+      let name = await contractInstance.getUserNameOf(employee);
+      result.push({ id, status, date, reason, employee, name });
+    }
+    return result;
   } catch (error) {
     console.error(error);
   }

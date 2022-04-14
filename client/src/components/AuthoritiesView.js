@@ -15,10 +15,11 @@ import {
 import ViewEmployees from "./ViewTabs/ViewEmployees";
 import ViewEmployers from "./ViewTabs/ViewEmployers";
 import ViewAuthorities from "./ViewTabs/ViewAuthorities";
+import ViewLeaves from "./ViewTabs/ViewLeaves";
 import AddAuthorities from "./AuthoritiesTabs/AddAuthorities";
 
 import MyInfo from "./MyInfo";
-import { getMyInfo, getOwnerAddress, getAllEmployees, getAllEmployers, getAllAuthorities } from "../services";
+import { getMyInfo, getOwnerAddress, getAllEmployees, getAllEmployers, getAllAuthorities, getAllLeaves } from "../services";
 
 export default function AuthoritiesView() {
   const { userAddress } = React.useContext(MetaContext);
@@ -27,6 +28,7 @@ export default function AuthoritiesView() {
   const [employers, setEmployers] = useState([]);
   const [myInfo, setMyInfo] = useState(null);
   const [accessRight, setAccessRight] = useState(false);
+  const [leaves, setLeaves] = useState([]);
 
   useEffect(() => {
     initView();
@@ -51,6 +53,13 @@ export default function AuthoritiesView() {
     });
   };
 
+  const initLeaves = async () => {
+    getAllLeaves().then((e) => {
+      console.log(e);
+      setLeaves(e);
+    });
+  };
+
   const initView = async () => {
     console.log("init");
 
@@ -69,6 +78,7 @@ export default function AuthoritiesView() {
     initEmployees();
     initEmployers();
     initAuthorities();
+    initLeaves();
   };
 
   return (
@@ -134,10 +144,7 @@ export default function AuthoritiesView() {
                     />
                   </TabPanel>
                   <TabPanel>
-                    <p>three!</p>
-                  </TabPanel>
-                  <TabPanel>
-                    <p>four!</p>
+                  <ViewLeaves leaves={leaves} myInfo={myInfo} />
                   </TabPanel>
                 </TabPanels>
               </Tabs>

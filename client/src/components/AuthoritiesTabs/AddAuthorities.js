@@ -56,7 +56,7 @@ export default function AddAuthorities({ authorities, setAuthorities }) {
       setStatus("success");
       setShowAlert(true);
       setAlertMessage("Authorities added!");
-      setAuthorities(authorities.concat({name: inputName, address: inputAddress}));
+      setAuthorities(authorities.concat({name: inputName, wallet: inputAddress}));
     }
   };
 

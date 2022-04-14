@@ -28,10 +28,10 @@ import {
   Tag,
 } from "@chakra-ui/react";
 import { ethers } from "ethers";
-import { approveLeave, getNameOfAddress, rejectLeave } from "../../services";
+import { approveLeave, rejectLeave, cancelLeave } from "../../services";
 const web3 = require("web3");
 
-export default function ViewLeaves({ leaves }) {
+export default function ViewLeaves({ leaves, myInfo }) {
   const { userAddress } = React.useContext(MetaContext);
 
   const handleApprove = async (leaveId) => {
@@ -42,6 +42,12 @@ export default function ViewLeaves({ leaves }) {
 
   const handleReject = async (leaveId) => {
     rejectLeave(leaveId).then(() => {
+      window.location.reload();
+    });
+  };
+
+  const handleCancel = async (leaveId) => {
+    cancelLeave(leaveId).then(() => {
       window.location.reload();
     });
   };
@@ -63,7 +69,8 @@ export default function ViewLeaves({ leaves }) {
             {leaves != null &&
               leaves.map((i, idx) => (
                 <Tr key={idx}>
-                  <Td>{i.name}</Td>
+                  {myInfo.role == 0 && <Td>{myInfo.name}</Td>}
+                  {myInfo.role != 0 && <Td>{i.name}</Td>}
                   <Td>
                     {
                       new Date(parseInt(i.date) * 1000)
@@ -87,7 +94,7 @@ export default function ViewLeaves({ leaves }) {
                       Cancel
                     </Button> */}
                     &nbsp;
-                    {i.status == 0 && (
+                    {i.status == 0 && myInfo.role == 1 && (
                       <>
                         <Button
                           size="md"
@@ -103,6 +110,17 @@ export default function ViewLeaves({ leaves }) {
                           onClick={() => handleReject(i.id)}
                         >
                           Reject
+                        </Button>
+                      </>
+                    )}
+                    {i.status == 0 && myInfo.role == 0 && (
+                      <>
+                        <Button
+                          size="md"
+                          bg="blue.100"
+                          onClick={() => handleCancel(i.id)}
+                        >
+                          Cancel
                         </Button>
                       </>
                     )}
