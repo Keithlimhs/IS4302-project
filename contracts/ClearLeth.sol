@@ -53,9 +53,8 @@ contract ClearLeth {
 
     mapping(address => leave[]) employeeToLeaves;
     mapping(address => uint256) employeeLeaveBalance;
-    mapping(uint256 => uint256) datesToEmployeesApplied;
+    mapping(address => mapping(uint256 => uint256)) datesToEmployeesApplied;
     mapping(address => uint256) employerToLeaveLimit;
-    mapping(address => uint256) employerToLeaveNum;
 
     ///////////////////// LEAVE EVENTS /////////////////////
     event LeaveApplied(address employee);
@@ -149,9 +148,10 @@ contract ClearLeth {
         _;
     }
 
-    modifier leaveLimitNotExceeded() {
+    modifier leaveLimitNotExceeded(uint256 date) {
         require(
-            employerToLeaveNum[msg.sender] < employerToLeaveLimit[msg.sender],
+            datesToEmployeesApplied[msg.sender][date] <
+                employerToLeaveLimit[msg.sender],
             "Leave Limit for employer will be exceeded if this leave is approved"
         );
         _;
@@ -294,7 +294,7 @@ contract ClearLeth {
         validLeaveId(leaveToApprove.id)
         validLeaveStatus(leaveToApprove)
         employerOnly(leaveToApprove.employee)
-        leaveLimitNotExceeded
+        leaveLimitNotExceeded(leaveToApprove.date)
     {
         address employeeAddress = leaveToApprove.employee;
         for (uint256 i = 0; i < employeeToLeaves[employeeAddress].length; i++) {
@@ -310,9 +310,8 @@ contract ClearLeth {
             }
         }
 
-        datesToEmployeesApplied[leaveToApprove.date]++;
+        datesToEmployeesApplied[msg.sender][leaveToApprove.date]++;
         employeeLeaveBalance[employeeAddress]--;
-        employerToLeaveNum[msg.sender] += 1;
         emit LeaveApproved(employeeAddress, msg.sender, leaveToApprove.id);
     }
 

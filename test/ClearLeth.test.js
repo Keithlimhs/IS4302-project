@@ -144,13 +144,13 @@ contract("ClearLeth", (accounts) => {
 
     // Test Case 3: Applying/cancelling leaves
     it("Test applying and cancelling of leaves", async () => {
-        let today = moment().unix();
+        let timestamp = moment("2022-04-05").unix();
         // TO GET LOCAL DATE STRING
         // let unixDate = new Date(today.unix() * 1000);
         // console.log(unixDate.toLocaleString());
 
         let leaveApplication = await clearLethInstance.applyLeaves(
-            [today],
+            [timestamp],
             [web3.utils.asciiToHex("test reason")],
             { from: employee }
         );
@@ -165,10 +165,10 @@ contract("ClearLeth", (accounts) => {
 
     // Test Case 3b: Testing reverts
     it("Ensure only employees can apply leave & cancel leaves", async () => {
-        let today = moment().unix();
+        let timestamp = moment("2022-04-05").unix();
         await truffleAssert.reverts(
             clearLethInstance.applyLeaves(
-                [today],
+                [timestamp],
                 [web3.utils.asciiToHex("test")],
                 {
                     from: employer,
@@ -178,7 +178,7 @@ contract("ClearLeth", (accounts) => {
         );
 
         let leaveApplication1 = await clearLethInstance.applyLeaves(
-            [today],
+            [timestamp],
             [web3.utils.asciiToHex("test")],
             { from: employee }
         );
@@ -218,7 +218,7 @@ contract("ClearLeth", (accounts) => {
 
     // Test Case 4b: Testing modifiers
     it("Ensure only employers of employee can approve or reject leave", async () => {
-        let timestamp = moment("2022-05-05").unix();
+        let timestamp = moment("2022-04-05").unix();
         let leaveApplication3 = await clearLethInstance.applyLeaves(
             [timestamp],
             [web3.utils.asciiToHex("test")],
@@ -243,7 +243,7 @@ contract("ClearLeth", (accounts) => {
     });
 
     it("Ensure that number of leaves approved cannot exceed Leave Limit", async () => {
-        let timestamp = moment("2022-05-05").unix();
+        let timestamp = moment("2022-04-05").unix();
 
         // Approve Leave3
         let leave3 = await clearLethInstance.getLeaveInformation(3);
