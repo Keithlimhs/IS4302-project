@@ -282,13 +282,9 @@ contract ClearLeth {
 
         for (uint256 j = 0; j < allLeaves.length; j++) {
             if (allLeaves[j].id == _leave.id) {
-                allLeaves[j].status = leaveStatus.approved;
+                allLeaves[j].status = leaveStatus.cancelled;
             }
         }
-
-        datesToEmployeesApplied[_leave.date]--;
-        employeeLeaveBalance[msg.sender]++;
-        employerToLeaveNum[msg.sender] -= 1;
 
         emit LeaveCancelled(msg.sender, _leave.id);
     }
@@ -339,10 +335,6 @@ contract ClearLeth {
                 allLeaves[j].status = leaveStatus.rejected;
             }
         }
-
-        datesToEmployeesApplied[leaveToReject.date]--;
-        employeeLeaveBalance[msg.sender]++;
-        employerToLeaveNum[msg.sender] -= 1;
 
         emit LeaveRejected(employeeAddress, msg.sender, leaveToReject.id);
     }
