@@ -36,19 +36,19 @@ export default function ViewLeaves({ leaves, myInfo }) {
 
   const handleApprove = async (leaveId) => {
     approveLeave(leaveId, userAddress).then(() => {
-      window.location.reload();
+      setTimeout(window.location.reload(), 500);
     });
   };
 
   const handleReject = async (leaveId) => {
     rejectLeave(leaveId).then(() => {
-      window.location.reload();
+      setTimeout(window.location.reload(), 500);
     });
   };
 
   const handleCancel = async (leaveId) => {
     cancelLeave(leaveId).then(() => {
-      window.location.reload();
+      setTimeout(window.location.reload(), 500);
     });
   };
 

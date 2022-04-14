@@ -87,7 +87,6 @@ export default function ApplyLeaves({ leaves, setLeaves }) {
           leaves.concat({ date: inputDates[i], reason: padded, status: 0 })
         );
       }
-      window.location.reload();
     }
   };
 
